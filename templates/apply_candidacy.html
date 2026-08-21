@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Apply for Candidacy - {{ voting_session.title }}</h2>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3>Position: {{ voting_session.position.name }}</h3>
+            <p>{{ voting_session.description }}</p>
+            <p><strong>Application Deadline:</strong> {{ voting_session.start_date|date:"F j, Y, g:i a" }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="h5 mb-0">Candidate Application Form</h3>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="candidate_name" class="form-label">Candidate Name <span class="text-muted">(Optional)</span></label>
+                    <input type="text" class="form-control" id="candidate_name" name="candidate_name" placeholder="Enter your display name (leave blank to use your profile name)">
+                    <div class="form-text">If different from your profile name, enter your preferred display name for the ballot.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="bio" class="form-label">Bio</label>
+                    <textarea class="form-control" id="bio" name="bio" rows="3" required></textarea>
+                    <div class="form-text">Tell us about yourself and why you're running for this position.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="experience" class="form-label">Relevant Experience</label>
+                    <textarea class="form-control" id="experience" name="experience" rows="3" required></textarea>
+                    <div class="form-text">Describe your experience and qualifications for this position.</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Application</button>
+                <a href="{% url 'voting_sessions' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

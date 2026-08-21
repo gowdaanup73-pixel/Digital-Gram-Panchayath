@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Create New Service</h1>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Add a new service to the Gram Panchayat portal</p>
+                </div>
+                <a href="{% url 'manage_services' %}" class="flex items-center text-sm text-primary hover:text-primary/80 transition-colors">
+                    <span class="material-symbols-outlined mr-1">arrow_back</span>
+                    Back to Services
+                </a>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+            <form method="post" class="space-y-8 divide-y divide-gray-200 dark:divide-gray-700" autocomplete="off">
+                {% csrf_token %}
+                
+                <div class="p-6 space-y-6">
+                    <!-- Service Name -->
+                    <div>
+                        <label for="serviceName" class="block text-sm font-medium text-gray-900 dark:text-white">Service Name</label>
+                        <div class="mt-2 relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">add_business</span>
+                            </div>
+                            <input type="text" name="name" id="serviceName" required
+                                class="block w-full pl-10 pr-4 py-2.5 text-gray-900 dark:text-white bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+                                placeholder="Enter service name"
+                                title="Enter the name of the service">
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label for="serviceDescription" class="block text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                        <div class="mt-2 relative rounded-md shadow-sm">
+                            <div class="absolute top-3 left-3 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">description</span>
+                            </div>
+                            <textarea id="serviceDescription" name="description" rows="4" required
+                                class="block w-full pl-10 pr-4 py-2.5 text-gray-900 dark:text-white bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+                                placeholder="Enter service description"
+                                title="Provide a detailed description of the service"></textarea>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Write a detailed description of the service and its requirements.</p>
+                        </div>
+                    </div>
+
+                    <!-- Maximum Applications -->
+                    <div>
+                        <label for="maxApplications" class="block text-sm font-medium text-gray-900 dark:text-white">Maximum Applications</label>
+                        <div class="mt-2 relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">group</span>
+                            </div>
+                            <input type="number" name="max_applications" id="maxApplications" min="1" value="1" required
+                                class="block w-full pl-10 pr-4 py-2.5 text-gray-900 dark:text-white bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+                                placeholder="Enter maximum number of applications"
+                                title="Set the maximum number of applications allowed">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <span class="text-gray-400 dark:text-gray-500 sm:text-sm">slots</span>
+                            </div>
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            Set the maximum number of applications that can be submitted for this service.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg flex items-center justify-end space-x-3">
+                    <button type="button" onclick="window.location.href='{% url 'manage_services' %}'"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors inline-flex items-center">
+                        <span class="material-symbols-outlined mr-2">add_circle</span>
+                        Create Service
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

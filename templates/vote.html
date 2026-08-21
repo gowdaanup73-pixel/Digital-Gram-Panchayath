@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Vote - {{ voting_session.title }}</h1>
+                
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Position: {{ voting_session.position.name }}</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-2">{{ voting_session.description }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">Voting ends:</span> {{ voting_session.end_date|date:"F j, Y, g:i a" }}
+                    </p>
+                </div>
+
+                {% if candidates %}
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+                        <div class="space-y-4">
+                            {% for candidate in candidates %}
+                                <div class="relative flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input type="radio" name="candidate" id="candidate{{ candidate.id }}" value="{{ candidate.id }}" required
+                                               class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600">
+                                    </div>
+                                    <div class="ml-3">
+                                        <label for="candidate{{ candidate.id }}" class="text-gray-900 dark:text-white font-medium block">
+                                            {{ candidate.user.get_full_name|default:candidate.user.username }}
+                                        </label>
+                                        <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ candidate.bio }}</p>
+                                        <p class="text-gray-600 dark:text-gray-400 text-sm">
+                                            <span class="font-medium">Experience:</span> {{ candidate.experience }}
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="flex space-x-4 mt-6">
+                            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Submit Vote
+                            </button>
+                            <a href="{% url 'voting_sessions' %}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="text-center py-8">
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">No approved candidates for this voting session.</p>
+                        <a href="{% url 'voting_sessions' %}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Back to Voting Sessions
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

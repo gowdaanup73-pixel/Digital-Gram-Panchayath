@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="container mt-5">
+    <h2 class="text-center mb-4">Building Construction Application</h2>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <form class="mx-auto" style="max-width:600px;" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" name="full_name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Aadhar Number</label>
+            <input type="text" name="aadhar_number" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea name="address" class="form-control" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Upload Documents</label>
+            <input type="file" class="form-control" multiple>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Submit Application</button>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="mb-10">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Gram Panchayath Roles & Responsibilities</h1>
+            <p class="text-gray-600 dark:text-gray-400">Current elected officials and their duties</p>
+        </div>
+
+        <!-- Current Elected Members Section -->
+        {% if elected_members %}
+        <div class="mb-12">
+            <div class="bg-gradient-to-r from-primary to-primary/80 text-white rounded-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <span class="material-symbols-outlined mr-3 text-3xl">how_to_vote</span>
+                    Current Elected Officials
+                </h2>
+                <p class="mt-2 text-primary-light opacity-90">Officials elected through recent voting sessions</p>
+            </div>
+
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {% for member in elected_members %}
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border-l-4 border-primary hover:shadow-xl transition">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+                                    {{ member.user.get_full_name|default:member.user.username }}
+                                </h3>
+                                <p class="text-primary font-semibold text-lg mt-1">{{ member.position.name }}</p>
+                            </div>
+                            <span class="inline-flex items-center px-3 py-1 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-400 text-xs font-bold rounded-full">
+                                <span class="material-symbols-outlined text-sm mr-1">verified</span>
+                                Active
+                            </span>
+                        </div>
+
+                        <div class="space-y-3 text-sm text-gray-600 dark:text-gray-400">
+                            <div>
+                                <p class="font-medium text-gray-700 dark:text-gray-300">Term Period</p>
+                                <p>{{ member.start_date|date:"M d, Y" }} – {{ member.end_date|date:"M d, Y" }}</p>
+                            </div>
+                            {% if member.position.description %}
+                            <div>
+                                <p class="font-medium text-gray-700 dark:text-gray-300">About This Position</p>
+                                <p>{{ member.position.description }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <a href="{% url 'view_profile' member.user.username %}" 
+                                class="inline-flex items-center text-primary hover:text-primary/80 font-medium text-sm">
+                                <span class="material-symbols-outlined text-sm mr-1">person</span>
+                                View Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 mb-12">
+            <p class="text-yellow-800 dark:text-yellow-300 flex items-center">
+                <span class="material-symbols-outlined mr-3">info</span>
+                <strong>No elected officials currently appointed.</strong> Complete a voting session to appoint officials.
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Role Descriptions Section -->
+        <div class="mb-8">
+            <div class="bg-gradient-to-r from-gray-700 to-gray-800 dark:from-gray-900 dark:to-gray-950 text-white rounded-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <span class="material-symbols-outlined mr-3 text-3xl">assignment</span>
+                    Role Descriptions & Responsibilities
+                </h2>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Sarpanch Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border-l-4 border-blue-600">
+                    <div class="bg-blue-600 dark:bg-blue-700 text-white px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="inline-block px-3 py-1 bg-blue-200 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-bold rounded">POSITION 1</span>
+                                <h3 class="text-2xl font-bold mt-2">Sarpanch (President)</h3>
+                            </div>
+                            <span class="px-3 py-1 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 text-sm font-bold rounded-full">Elected Head</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-gray-700 dark:text-gray-300">
+                        <ul class="space-y-2 list-disc pl-5">
+                            <li>Highest responsibility in the Gram Panchayath</li>
+                            <li>Chairs all meetings and holds overall executive authority</li>
+                            <li>Exercises financial control jointly with the Up-Sarpanch</li>
+                            <li>Represents the GP to higher authorities</li>
+                            <li>Ensures implementation of all resolutions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Up-Sarpanch Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border-l-4 border-indigo-600">
+                    <div class="bg-indigo-600 dark:bg-indigo-700 text-white px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="inline-block px-3 py-1 bg-indigo-200 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-xs font-bold rounded">POSITION 2</span>
+                                <h3 class="text-2xl font-bold mt-2">Up-Sarpanch (Vice-President)</h3>
+                            </div>
+                            <span class="px-3 py-1 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 text-sm font-bold rounded-full">Elected</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-gray-700 dark:text-gray-300">
+                        <ul class="space-y-2 list-disc pl-5">
+                            <li>Assumes all responsibilities of the Sarpanch in their absence</li>
+                            <li>Chairs specific committees</li>
+                            <li>Shares financial signatory power</li>
+                            <li>Assists in coordinating development activities</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Secretary Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border-l-4 border-green-600">
+                    <div class="bg-green-600 dark:bg-green-700 text-white px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="inline-block px-3 py-1 bg-green-200 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-bold rounded">POSITION 3</span>
+                                <h3 class="text-2xl font-bold mt-2">Secretary</h3>
+                            </div>
+                            <span class="px-3 py-1 bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 text-sm font-bold rounded-full">Elected</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-gray-700 dark:text-gray-300">
+                        <ul class="space-y-2 list-disc pl-5">
+                            <li>Administrative head and highest staff responsibility</li>
+                            <li>Implements all decisions and manages funds</li>
+                            <li>Maintains records and official documentation</li>
+                            <li>Coordinates government schemes and programs</li>
+                            <li>Acts as the link to the state government machinery</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Additional Staff Roles -->
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+                    <h4 class="text-lg font-bold text-blue-900 dark:text-blue-300 mb-3">Supporting Staff Positions</h4>
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <div>
+                            <h5 class="font-semibold text-gray-900 dark:text-white mb-2">Clerical/Assistant Staff</h5>
+                            <p class="text-sm text-gray-700 dark:text-gray-400">Supports the Secretary with daily office administration, data entry, and record maintenance.</p>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-gray-900 dark:text-white mb-2">Bill Collector / Tax Collector</h5>
+                            <p class="text-sm text-gray-700 dark:text-gray-400">Responsible for collecting local taxes, rates, and fees to generate GP revenue.</p>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-gray-900 dark:text-white mb-2">Operational Staff</h5>
+                            <p class="text-sm text-gray-700 dark:text-gray-400">Handles water supply maintenance, sanitation, and waste management operations.</p>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-gray-900 dark:text-white mb-2">Panchs (Ward Members)</h5>
+                            <p class="text-sm text-gray-700 dark:text-gray-400">Represent wards, participate in decision-making, and work within standing committees.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

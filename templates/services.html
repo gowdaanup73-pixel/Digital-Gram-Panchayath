@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="relative flex h-auto min-h-screen w-full flex-col justify-between overflow-x-hidden">
+<div class="flex-grow">
+<header class="sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-sm">
+<div class="flex items-center p-4">
+<h1 class="flex-1 text-center text-lg font-bold text-gray-900 dark:text-white">Digital Gram Panchayat</h1>
+</div>
+<div class="px-4 pb-4">
+<form method="GET" action="{% url 'services' %}" class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">search</span>
+<input name="q" value="{{ search_query }}" 
+    class="w-full rounded-full border-none bg-gray-100 dark:bg-gray-700 py-3 pl-10 pr-4 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary" 
+    placeholder="Search for services" type="text"/>
+</div>
+</div>
+</header>
+<main class="p-4">
+<h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">All Services</h2>
+<div class="grid grid-cols-1 gap-3">
+    {% if search_query and not services %}
+    <div class="text-center py-8">
+        <span class="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600">search_off</span>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">No services found matching "{{ search_query }}"</p>
+        <a href="{% url 'services' %}" class="mt-4 inline-flex items-center gap-2 text-primary hover:text-primary/90">
+            <span class="material-symbols-outlined">arrow_back</span>
+            View all services
+        </a>
+    </div>
+    {% else %}
+        {% for service in services %}
+        <a class="group flex items-start gap-4 rounded-lg bg-white dark:bg-gray-800 p-4 shadow-sm transition-all hover:bg-gray-50 dark:hover:bg-gray-700" href="{% url 'apply_service' service.id %}">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary/20">
+                <span class="material-symbols-outlined">{% if 'Road' in service.name %}construction
+                    {% elif 'Bio' in service.name %}eco
+                    {% elif 'Skill' in service.name %}engineering
+                    {% else %}description{% endif %}</span>
+            </div>
+            <div class="flex-grow">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-primary">{{ service.name }}</h3>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                        {{ service.max_applications }} slots
+                    </span>
+                </div>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ service.description }}</p>
+                <div class="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <span class="material-symbols-outlined text-sm mr-1">schedule</span>
+                    Added {{ service.created_at|timesince }} ago
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div class="text-center py-8">
+            <span class="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600">category</span>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">No services available yet.</p>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
+</main>
+</div>
+<footer class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+<nav class="flex justify-around py-3">
+    <a class="flex flex-col items-center gap-1 text-primary" href="{% url 'services' %}">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">list_alt</span>
+        <span class="text-xs">Services</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="{% url 'user_dashboard' %}">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="text-xs">Dashboard</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="{% url 'profile' %}">
+        <span class="material-symbols-outlined">person</span>
+        <span class="text-xs">Profile</span>
+    </a>
+</nav>
+</footer>
+</div>
+{% endblock %}

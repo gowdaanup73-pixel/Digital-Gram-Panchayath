@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-8 flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Voting Sessions</h1>
+            {% if user.is_staff %}
+            <a href="{% url 'manage_voting_sessions' %}" 
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                <span class="material-symbols-outlined mr-2">settings</span>
+                Manage Sessions
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Active Voting Sessions -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+                <span class="material-symbols-outlined mr-2 text-primary">how_to_vote</span>
+                Active Sessions
+            </h2>
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {% for session in active_sessions %}
+                <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ session.title }}</h3>
+                            {% if session.id in voted_sessions %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400">
+                                <span class="material-symbols-outlined text-sm mr-1">check_circle</span>
+                                Voted
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ session.description }}</p>
+                        
+                        <div class="space-y-2 mb-6">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                <span class="material-symbols-outlined text-primary mr-2">work</span>
+                                <span class="font-medium">Position:</span> 
+                                <span class="ml-1">{{ session.position.name }}</span>
+                            </p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                <span class="material-symbols-outlined text-primary mr-2">schedule</span>
+                                <span class="font-medium">Ends:</span>
+                                <span class="ml-1">{{ session.end_date|date:"F j, Y, g:i a" }}</span>
+                            </p>
+                        </div>
+
+                        <div class="flex space-x-4">
+                            {% if session.id in voted_sessions %}
+                            <button disabled class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-md cursor-not-allowed dark:bg-gray-700 dark:text-gray-500">
+                                <span class="material-symbols-outlined mr-2">how_to_vote</span>
+                                Already Voted
+                            </button>
+                            {% else %}
+                            <a href="{% url 'vote' session.id %}" 
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md shadow-sm transition-colors">
+                                <span class="material-symbols-outlined mr-2">how_to_vote</span>
+                                Cast Vote
+                            </a>
+                            {% endif %}
+                            
+                            <a href="{% url 'apply_candidacy' session.id %}" 
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-md transition-colors">
+                                <span class="material-symbols-outlined mr-2">person_add</span>
+                                Apply as Candidate
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full text-center py-12">
+                    <span class="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600">how_to_vote</span>
+                    <p class="mt-4 text-gray-600 dark:text-gray-400">No active voting sessions at the moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Upcoming Voting Sessions -->
+        <div>
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+                <span class="material-symbols-outlined mr-2 text-primary">event_upcoming</span>
+                Upcoming Sessions
+            </h2>
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {% for session in upcoming_sessions %}
+                <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ session.title }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ session.description }}</p>
+                        
+                        <div class="space-y-2 mb-6">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                <span class="material-symbols-outlined text-primary mr-2">work</span>
+                                <span class="font-medium">Position:</span>
+                                <span class="ml-1">{{ session.position.name }}</span>
+                            </p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                                <span class="material-symbols-outlined text-primary mr-2">event</span>
+                                <span class="font-medium">Starts:</span>
+                                <span class="ml-1">{{ session.start_date|date:"F j, Y, g:i a" }}</span>
+                            </p>
+                        </div>
+
+                        <a href="{% url 'apply_candidacy' session.id %}" 
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-md transition-colors">
+                            <span class="material-symbols-outlined mr-2">person_add</span>
+                            Apply as Candidate
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full text-center py-12">
+                    <span class="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600">event_upcoming</span>
+                    <p class="mt-4 text-gray-600 dark:text-gray-400">No upcoming voting sessions at the moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

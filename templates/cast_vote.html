@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Cast Your Vote</h1>
+        
+        <!-- Voting Session Details -->
+        <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden mb-8">
+            <div class="p-6">
+                <h2 class="text-xl font-medium text-gray-900 dark:text-white mb-2">{{ voting_session.title }}</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">{{ voting_session.description }}</p>
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">Position:</span> {{ voting_session.position.name }}
+                    </p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <span class="font-medium">Voting Ends:</span> {{ voting_session.end_date|date:"F j, Y, g:i a" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voting Rules Info -->
+        {% if candidates %}
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+            <p class="text-sm text-blue-800 dark:text-blue-300">
+                <span class="material-symbols-outlined text-base align-middle">info</span>
+                <strong class="ml-2">Voting Rules:</strong> You can cast only one vote per voting session. Choose wisely.
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Candidates List -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Select a Candidate</h3>
+                    
+                    {% if candidates %}
+                    <div class="space-y-4">
+                        {% for candidate in candidates %}
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                            <div class="flex items-start">
+                                <input type="radio" name="candidate" value="{{ candidate.id }}" 
+                                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 mt-1"
+                                       id="candidate-{{ candidate.id }}" required>
+                                <label for="candidate-{{ candidate.id }}" class="ml-4 flex-1 cursor-pointer">
+                                    <div class="text-base font-semibold text-gray-900 dark:text-white">
+                                        {{ candidate.user.get_full_name|default:candidate.user.username }}
+                                    </div>
+                                    <div class="mt-2">
+                                        <p class="text-xs font-medium text-gray-600 dark:text-gray-400">Bio</p>
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                                            {{ candidate.bio }}
+                                        </p>
+                                    </div>
+                                    <div class="mt-3">
+                                        <p class="text-xs font-medium text-gray-600 dark:text-gray-400">Experience</p>
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                                            {{ candidate.experience }}
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                        <p class="text-sm text-yellow-800 dark:text-yellow-300">
+                            <span class="material-symbols-outlined text-base align-middle">warning</span>
+                            <strong class="ml-2">No Approved Candidates Yet:</strong> No approved candidates are available for voting. Please check back later.
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if candidates %}
+            <div class="flex justify-end space-x-3">
+                <a href="{% url 'voting_sessions' %}"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600">
+                    Cancel
+                </a>
+                <button type="submit" 
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded-md">
+                    <span class="material-symbols-outlined mr-2">how_to_vote</span>
+                    Cast Vote
+                </button>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}
