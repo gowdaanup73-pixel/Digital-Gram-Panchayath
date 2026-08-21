@@ -146,7 +146,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+if os.environ.get('VERCEL') == '1':
+    STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), '.vercel', 'output', 'static')
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] if os.path.exists(os.path.join(BASE_DIR, 'static')) else []
 
 # WhiteNoise: serve compressed static files efficiently in production
