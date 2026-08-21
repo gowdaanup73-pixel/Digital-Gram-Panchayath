@@ -98,11 +98,15 @@ WSGI_APPLICATION = 'digital_gram_panchayat.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import dj_database_url
+
+DATABASE_URL = os.environ.get(
+    'DATABASE_URL', 
+    'postgresql://neondb_owner:npg_YDs0WMEtfBo9@ep-dawn-grass-aydi57us.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require'
+)
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
 }
 
 

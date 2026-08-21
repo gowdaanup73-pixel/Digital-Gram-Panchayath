@@ -6,8 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token }}">
     <title>Digital Gram Panchayat</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap removed: using TailwindCSS only -->
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <!-- TailwindCSS -->
@@ -152,26 +151,55 @@
     <nav class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 fixed w-full z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
+                <!-- Logo -->
                 <div class="flex items-center">
                     <span class="material-symbols-outlined text-primary text-2xl">account_balance</span>
                     <span class="ml-2 text-gray-900 dark:text-white font-semibold">Digital Gram Panchayat</span>
                 </div>
-                <div class="flex items-center gap-4">
-                    <!-- Simple Language Selector -->
+                <!-- Nav Links (desktop) -->
+                <div class="hidden md:flex items-center gap-1">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'user_dashboard' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">dashboard</span>Dashboard
+                    </a>
+                    <a href="{% url 'services' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">list_alt</span>Services
+                    </a>
+                    <a href="{% url 'view_complaints' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">report</span>Complaints
+                    </a>
+                    <a href="{% url 'profile' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base">person</span>Profile
+                    </a>
+                    {% endif %}
+                </div>
+                <!-- Right side controls -->
+                <div class="flex items-center gap-3">
+                    <!-- Language Selector -->
                     <select id="languageSelector" class="rounded px-2 py-1 text-sm border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white cursor-pointer" title="Select language">
                         <option value="en" selected>English</option>
                         <option value="hi">हिन्दी</option>
                         <option value="kn">ಕನ್ನಡ</option>
                     </select>
-                    
-                    <!-- Hidden container for Google Translate -->
+                    <!-- Hidden Google Translate container -->
                     <div id="google_translate_element" class="hidden"></div>
-
-                    <!-- Dark Mode Toggle Button -->
+                    <!-- Dark Mode Toggle -->
                     <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
                         <span class="material-symbols-outlined dark:hidden" aria-hidden="true">dark_mode</span>
                         <span class="material-symbols-outlined hidden dark:inline" aria-hidden="true">light_mode</span>
                     </button>
+                    <!-- Logout Button -->
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors">
+                        <span class="material-symbols-outlined text-base">logout</span>
+                        <span class="hidden sm:inline">Logout</span>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors">
+                        <span class="material-symbols-outlined text-base">login</span>
+                        <span class="hidden sm:inline">Login</span>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

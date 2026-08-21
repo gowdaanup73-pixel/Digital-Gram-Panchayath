@@ -2,7 +2,7 @@
 {% load form_tags %}
 {% block content %}
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <header class="sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-sm">
+    <header class="sticky top-16 z-10 bg-white dark:bg-gray-800 shadow-sm">
         <div class="flex items-center justify-between p-4">
             <div class="flex items-center gap-4">
                 <h1 class="text-xl font-bold text-gray-900 dark:text-white">
@@ -104,7 +104,7 @@
                             </div>
                         </div>
 
-                        <!-- Profile Picture -->
+                        <!-- Profile Picture (not editable - upload not supported) -->
                         <div class="pt-4">
                             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Profile Picture</h2>
                             <div class="flex items-center space-x-4">
@@ -115,12 +115,7 @@
                                     <span class="material-symbols-outlined text-4xl text-gray-400">person</span>
                                 </div>
                                 {% endif %}
-                                {% if can_edit %}
-                                <div class="flex-1">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Change Profile Picture</label>
-                                    {{ p_form.profile_picture|addclass:"mt-1 block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90" }}
-                                </div>
-                                {% endif %}
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Profile photo is set automatically.</p>
                             </div>
                         </div>
                     </div>

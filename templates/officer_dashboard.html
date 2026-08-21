@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="relative flex h-auto min-h-screen w-full flex-col justify-between overflow-x-hidden bg-gray-50 dark:bg-gray-900">
-    <header class="sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-sm">
+    <header class="sticky top-16 z-10 bg-white dark:bg-gray-800 shadow-sm">
         <div class="flex items-center justify-between p-4">
             <h1 class="text-xl font-bold text-gray-900 dark:text-white">Officer Dashboard</h1>
             <div class="flex items-center gap-2">
@@ -9,9 +9,10 @@
                     <span class="material-symbols-outlined">assignment</span>
                     GP Roles
                 </a>
-                <button class="flex items-center justify-center rounded-full p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                    <span class="material-symbols-outlined">account_circle</span>
-                </button>
+                <a href="{% url 'logout' %}" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <span class="material-symbols-outlined">logout</span>
+                    Logout
+                </a>
             </div>
         </div>
     </header>

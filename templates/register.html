@@ -18,16 +18,16 @@
                     {% csrf_token %}
                     
                     {% if form.errors %}
-                    <div class="rounded-md bg-red-900/50 p-4">
+                    <div class="rounded-md bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 p-4">
                         <div class="flex">
                             <div class="flex-shrink-0">
-                                <span class="material-symbols-outlined text-red-400">error</span>
+                                <span class="material-symbols-outlined text-red-500 dark:text-red-400">error</span>
                             </div>
                             <div class="ml-3">
-                                <h3 class="text-sm font-medium text-red-200">
+                                <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
                                     There were errors with your submission
                                 </h3>
-                                <div class="mt-2 text-sm text-red-300">
+                                <div class="mt-2 text-sm text-red-700 dark:text-red-300">
                                     <ul class="list-disc pl-5 space-y-1">
                                         {% for field, errors in form.errors.items %}
                                             {% for error in errors %}
@@ -42,7 +42,7 @@
                     {% endif %}
 
                     <div>
-                        <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-300">
+                        <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Username
                         </label>
                         <div class="mt-1 relative rounded-md shadow-sm">
@@ -52,12 +52,12 @@
                             {{ form.username }}
                         </div>
                         {% if form.username.help_text %}
-                        <p class="mt-2 text-sm text-gray-400">{{ form.username.help_text }}</p>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ form.username.help_text }}</p>
                         {% endif %}
                     </div>
 
                     <div>
-                        <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-300">
+                        <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Password
                         </label>
                         <div class="mt-1 relative rounded-md shadow-sm">
@@ -69,7 +69,7 @@
                     </div>
 
                     <div>
-                        <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-300">
+                        <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Confirm Password
                         </label>
                         <div class="mt-1 relative rounded-md shadow-sm">
@@ -119,10 +119,10 @@
                 <div class="mt-6">
                     <div class="relative">
                         <div class="absolute inset-0 flex items-center">
-                            <div class="w-full border-t border-gray-700"></div>
+                            <div class="w-full border-t border-gray-300 dark:border-gray-700"></div>
                         </div>
                         <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-gray-800 text-gray-400">
+                            <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
                                 Already have an account?
                             </span>
                         </div>

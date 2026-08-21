@@ -2,19 +2,14 @@
 {% block content %}
 <div class="relative flex h-auto min-h-screen w-full flex-col justify-between overflow-x-hidden">
 <div class="flex-grow">
-<header class="sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-sm">
-<div class="flex items-center p-4">
-<h1 class="flex-1 text-center text-lg font-bold text-gray-900 dark:text-white">Digital Gram Panchayat</h1>
-</div>
-<div class="px-4 pb-4">
+<div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
 <form method="GET" action="{% url 'services' %}" class="relative">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">search</span>
-<input name="q" value="{{ search_query }}" 
-    class="w-full rounded-full border-none bg-gray-100 dark:bg-gray-700 py-3 pl-10 pr-4 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary" 
+<input name="q" value="{{ search_query }}"
+    class="w-full rounded-full border-none bg-gray-100 dark:bg-gray-700 py-3 pl-10 pr-4 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
     placeholder="Search for services" type="text"/>
+</form>
 </div>
-</div>
-</header>
 <main class="p-4">
 <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">All Services</h2>
 <div class="grid grid-cols-1 gap-3">

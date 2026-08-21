@@ -1,5 +1,6 @@
 from django.urls import path
 from django.shortcuts import redirect
+from django.contrib.auth import views as auth_views
 from . import views
 from . import voting_views
 
@@ -12,6 +13,7 @@ urlpatterns = [
     path('officer-dashboard/', views.officer_dashboard, name='officer_dashboard'),
     path('officer-login/', views.officer_login, name='officer_login'),
     path('login/', views.login_view, name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('register/', views.register, name='register'),
     path('', lambda request: redirect('login'), name='root'),
     path('services/', views.services, name='services'),
@@ -23,17 +25,16 @@ urlpatterns = [
     path('submit-complaint/', views.submit_complaint, name='submit_complaint'),
     path('profile/', views.profile, name='profile'),
     path('profile/<str:username>/', views.profile, name='view_profile'),
-    path('submit-complaint/', views.submit_complaint, name='submit_complaint'),
     path('view-complaints/', views.view_complaints, name='view_complaints'),
     path('update-complaint-status/<int:complaint_id>/', views.update_complaint_status, name='update_complaint_status'),
     path('delete-complaint/<int:complaint_id>/', views.delete_complaint, name='delete_complaint'),
     path('roles-responsibilities/', views.roles_responsibilities, name='roles_responsibilities'),
-    
+
     # Voting URLs
     path('voting-sessions/', views.voting_sessions, name='voting_sessions'),
     path('vote/<int:session_id>/', views.vote, name='vote'),
     path('apply-candidacy/<int:session_id>/', views.apply_candidacy, name='apply_candidacy'),
-    
+
     # Officer/Admin Voting Management URLs
     path('manage-voting-sessions/', voting_views.manage_voting_sessions, name='manage_voting_sessions'),
     path('create-voting-session/', voting_views.create_voting_session, name='create_voting_session'),
