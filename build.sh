@@ -1,13 +1,6 @@
-#!/bin/bash
-set -e
+﻿#!/usr/bin/env bash
+set -o errexit
 
-echo "Installing Python dependencies..."
-pip install -q -r requirements.txt
-
-echo "Running Django migrations..."
-python manage.py migrate --noinput
-
-echo "Collecting static files..."
-python manage.py collectstatic --noinput --clear
-
-echo "Build completed successfully!"
+pip install -r requirements.txt
+python manage.py collectstatic --no-input
+python manage.py migrate

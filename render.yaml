@@ -1,0 +1,15 @@
+﻿services:
+  - type: web
+    name: digital-gram-panchayat
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn digital_gram_panchayat.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        value: "postgresql://neondb_owner:npg_YDs0WMEtfBo9@ep-dawn-grass-aydi57us.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require"
+      - key: PYTHON_VERSION
+        value: "3.11.0"
