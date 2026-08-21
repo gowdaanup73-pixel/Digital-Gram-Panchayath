@@ -35,7 +35,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-t(tvt%&=owzmedu+d3qn#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app', '.herokuapp.com', '.onrender.com', '*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app', '.herokuapp.com', '.onrender.com', '.pythonanywhere.com', '*']
 
 # Session settings
 SESSION_COOKIE_SECURE = not DEBUG  # Only secure in production
