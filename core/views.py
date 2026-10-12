@@ -14,6 +14,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django import forms
+from django.forms.utils import ErrorList
 from django.views.decorators.http import require_http_methods, require_POST
 
 from .models import (
@@ -56,10 +57,15 @@ def login_view(request):
                 target_id=username,
                 details=f"Login blocked due to rate limit threshold for username '{username}'."
             )
-            messages.error(request, 'Too many failed login attempts. Please wait 5 minutes before trying again.')
+            lockout_msg = 'Too many failed login attempts. Please wait 5 minutes before trying again.'
+            messages.error(request, lockout_msg)
+            form = AuthenticationForm()
+            form._errors = {'__all__': ErrorList([lockout_msg])}
             return render(request, 'login.html', {
-                'form': AuthenticationForm(),
-                'next': request.GET.get('next', '')
+                'form': form,
+                'next': request.GET.get('next', ''),
+                'lockout_error': lockout_msg,
+                'rate_limited': True,
             })
 
         form = AuthenticationForm(request, data=request.POST)
@@ -117,8 +123,15 @@ def officer_login(request):
                 target_id=username,
                 details=f"Officer login blocked due to rate limit threshold for '{username}'."
             )
-            messages.error(request, 'Too many failed login attempts. Please wait 5 minutes before trying again.')
-            return render(request, 'officer_login.html', {'form': AuthenticationForm()})
+            lockout_msg = 'Too many failed login attempts. Please wait 5 minutes before trying again.'
+            messages.error(request, lockout_msg)
+            form = AuthenticationForm()
+            form._errors = {'__all__': ErrorList([lockout_msg])}
+            return render(request, 'officer_login.html', {
+                'form': form,
+                'lockout_error': lockout_msg,
+                'rate_limited': True,
+            })
 
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():

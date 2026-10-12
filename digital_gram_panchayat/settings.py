@@ -50,8 +50,11 @@ if not SECRET_KEY:
 env_allowed_hosts = os.environ.get('ALLOWED_HOSTS')
 if env_allowed_hosts:
     ALLOWED_HOSTS = [h.strip() for h in env_allowed_hosts.split(',') if h.strip()]
+    if DEBUG and 'testserver' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('testserver')
 elif DEBUG or 'test' in sys.argv:
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver', '[::1]']
+
 else:
     ALLOWED_HOSTS = [
         '127.0.0.1',
@@ -70,13 +73,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     # Third party apps
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     # Local apps
     'core',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -85,9 +95,11 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 # Security Headers & Protections
 X_FRAME_OPTIONS = 'DENY'
@@ -137,6 +149,10 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.csrf',
             ],
+            'libraries': {
+                'validators_tags': 'core.templatetags.validators_tags',
+                'form_tags': 'core.templatetags.form_tags',
+            },
         },
     },
 ]
@@ -238,8 +254,69 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Authentication Backends (supports standard Django auth and allauth social login)
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# Email Configuration
+# Uses console backend locally if SMTP is not provided; does not claim live email without verified config.
+if os.environ.get('EMAIL_HOST'):
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.environ.get('EMAIL_HOST')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+    EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() in ('true', '1')
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@digitalgrampanchayat.gov.in')
+
+# django-allauth Google OAuth 2.0 Configuration
+# Credentials are loaded exclusively via environment variables
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.environ.get('GOOGLE_OAUTH_CLIENT_ID') or os.environ.get('GOOGLE_CLIENT_ID', ''),
+            'secret': os.environ.get('GOOGLE_OAUTH_CLIENT_SECRET') or os.environ.get('GOOGLE_CLIENT_SECRET', ''),
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'VERIFIED_EMAIL': True,
+    }
+}
+SOCIALACCOUNT_LOGIN_ON_GET = False
+SOCIALACCOUNT_AUTO_SIGNUP = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_SIGNUP_FIELDS = ['username*', 'email', 'password1*', 'password2*']
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'services'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'login'
+
+# Custom adapters: profile autofill on Google signup, privilege-escalation prevention
+SOCIALACCOUNT_ADAPTER = 'core.adapters.GramPanchayathSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'core.adapters.GramPanchayathAccountAdapter'
+
+# In-Memory Cache configuration for rate limiting and session throttling
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'dgp_cache_locmem',
+    }
+}
+
+
 # Logging & Audit Configuration
 LOGGING = {
+
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {

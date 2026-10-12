@@ -10,3 +10,4 @@ asgiref==3.10.0
 djangorestframework>=3.14.0
 djangorestframework-simplejwt>=5.3.0
 PyJWT>=2.8.0
+django-allauth>=65.0.0

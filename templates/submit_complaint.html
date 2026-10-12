@@ -1,114 +1,107 @@
 {% extends 'base.html' %}
+{% block title %}Lodge Civic Complaint · Digital Gram Panchayat{% endblock %}
+
 {% block content %}
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <header class="bg-white dark:bg-gray-800 shadow">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Submit Complaint</h1>
+<div class="max-w-2xl mx-auto px-4 py-8 sm:py-14">
+    
+    <!-- Top Administrative Metadata Header -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-stone border-b border-[#D8CDBB] dark:border-[#37372F] pb-2">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 bg-rust"></span>
+            <span class="uppercase tracking-widest text-ink dark:text-paper font-semibold">GRIEVANCE REGISTRATION DESK</span>
+            <span class="text-stone">/</span>
+            <span class="uppercase">SEC-COMPLAINT-FILE</span>
         </div>
-    </header>
+        <a href="{% url 'view_complaints' %}" class="text-stone hover:text-rust flex items-center gap-1 uppercase tracking-wider text-[11px]">
+            <span class="material-symbols-outlined text-xs notranslate" translate="no">arrow_back</span>
+            <span>View Grievances Log</span>
+        </a>
+    </div>
 
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow px-5 py-6 sm:px-6">
-                <form method="post" enctype="multipart/form-data" class="space-y-6">
-                    {% csrf_token %}
-                    
-                    {% if messages %}
-                    <div class="rounded-md bg-green-50 dark:bg-green-900/50 p-4 mb-6">
-                        {% for message in messages %}
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <span class="material-symbols-outlined text-green-400">check_circle</span>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-green-800 dark:text-green-200">
-                                    {{ message }}
-                                </p>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-
-                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                        <div class="sm:col-span-3">
-                            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Category
-                            </label>
-                            <select id="category" name="category" required
-                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 
-                                focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md
-                                dark:bg-gray-700 dark:text-white">
-                                <option value="">Select a category</option>
-                                {% for value, label in categories %}
-                                <option value="{{ value }}">{{ label }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="sm:col-span-6">
-                            <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Subject
-                            </label>
-                            <input type="text" name="subject" id="subject" required
-                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm
-                                focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-700 dark:text-white">
-                        </div>
-
-                        <div class="sm:col-span-6">
-                            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Description
-                            </label>
-                            <textarea id="description" name="description" rows="4" required
-                                class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm
-                                focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-700 dark:text-white"></textarea>
-                        </div>
-
-                        <div class="sm:col-span-6">
-                            <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Location
-                            </label>
-                            <input type="text" name="location" id="location" required
-                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm
-                                focus:ring-primary focus:border-primary sm:text-sm dark:bg-gray-700 dark:text-white">
-                        </div>
-
-                        <div class="sm:col-span-6">
-                            <label for="attachment" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Attachment (optional)
-                            </label>
-                            <input type="file" name="attachment" id="attachment"
-                                class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400
-                                file:mr-4 file:py-2 file:px-4
-                                file:rounded-md file:border-0
-                                file:text-sm file:font-semibold
-                                file:bg-primary file:text-white
-                                hover:file:bg-primary/90">
-                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                Upload any relevant images or documents (max 5MB)
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="pt-5">
-                        <div class="flex justify-end">
-                            <a href="{% url 'view_complaints' %}"
-                                class="bg-white dark:bg-gray-700 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium
-                                text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2
-                                focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-900">
-                                Cancel
-                            </a>
-                            <button type="submit"
-                                class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm
-                                font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2
-                                focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-900">
-                                Submit Complaint
-                            </button>
-                        </div>
-                    </div>
-                </form>
+    <!-- Container -->
+    <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-6 sm:p-10 shadow-card relative">
+        <div class="mb-6 pb-4 border-b border-[#D8CDBB] dark:border-[#3E3E34]">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-khadi dark:bg-[#1E1E19] border border-[#D8CDBB] dark:border-[#3E3E34] p-1 flex items-center justify-center text-rust">
+                    <span class="material-symbols-outlined text-xl notranslate" translate="no">report_problem</span>
+                </div>
+                <div>
+                    <h1 class="font-serif text-2xl font-bold text-ink dark:text-paper leading-tight">
+                        Lodge Formal Grievance
+                    </h1>
+                    <span class="text-xs text-stone uppercase tracking-wider block">
+                        ಸಾರ್ವಜನಿಕ ಕುಂದುಕೊರತೆ ಅರ್ಜಿ ಸಲ್ಲಿಕೆ
+                    </span>
+                </div>
             </div>
+            <p class="text-xs text-charcoal dark:text-stone mt-2">
+                Every grievance logged receives a statutory case tracking ID and undergoes mandatory officer review.
+            </p>
         </div>
-    </main>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-4" autocomplete="off">
+            {% csrf_token %}
+
+            <div>
+                <label for="category" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Civic Category <span class="text-rust">*</span>
+                </label>
+                <select id="category" name="category" required
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust">
+                    <option value="">Select issue category</option>
+                    {% for value, label in categories %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="subject" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Grievance Subject / Short Title <span class="text-rust">*</span>
+                </label>
+                <input type="text" name="subject" id="subject" required
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust"
+                    placeholder="Brief description of the problem">
+            </div>
+
+            <div>
+                <label for="location" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Specific Location / Village Ward <span class="text-rust">*</span>
+                </label>
+                <input type="text" name="location" id="location" required
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust"
+                    placeholder="e.g. Ward 3, Near Primary Health Center">
+            </div>
+
+            <div>
+                <label for="description" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Comprehensive Description <span class="text-rust">*</span>
+                </label>
+                <textarea id="description" name="description" rows="4" required
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust"
+                    placeholder="Provide full details regarding when the issue began, impact on residents, and required remedy..."></textarea>
+            </div>
+
+            <div>
+                <label for="attachment" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Document / Image Evidence (Optional, Max 5MB)
+                </label>
+                <input type="file" name="attachment" id="attachment"
+                    class="text-xs text-charcoal dark:text-stone file:mr-3 file:py-1.5 file:px-3 file:border file:border-[#D8CDBB] file:bg-paper file:text-xs file:font-semibold file:uppercase file:text-ink hover:file:bg-khadi cursor-pointer">
+            </div>
+
+            <div class="pt-4 border-t border-[#D8CDBB] dark:border-[#3E3E34] flex justify-end gap-3">
+                <a href="{% url 'view_complaints' %}"
+                    class="px-4 py-2.5 border border-[#D8CDBB] dark:border-[#3E3E34] text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone hover:text-ink">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-5 py-2.5 bg-rust hover:bg-rust-dark text-paper text-xs font-semibold uppercase tracking-wider border border-rust transition-colors shadow-sm inline-flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm notranslate" translate="no">send</span>
+                    <span>Submit Grievance</span>
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

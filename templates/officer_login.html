@@ -1,71 +1,131 @@
 {% extends 'base.html' %}
+{% block title %}Officer Administration Portal · Digital Gram Panchayat{% endblock %}
+
 {% block content %}
-<div class="flex flex-col min-h-screen justify-center items-center px-4 bg-gray-50 dark:bg-gray-900">
-<div class="w-full max-w-sm mx-auto">
-<header class="text-center mb-8">
-<h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Digital Gram Panchayat</h1>
-<p class="mt-2 text-lg text-gray-600 dark:text-gray-400">Officer/Admin Portal</p>
-</header>
-<main class="space-y-6">
-<div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl p-6">
-    <form method="post" autocomplete="off" class="space-y-4">
-        {% csrf_token %}
-        <div class="space-y-1">
-            <label for="id_username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
-            <div class="relative">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">person</span>
-                <input type="text" name="username" id="id_username" maxlength="150" required 
-                    class="block w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary focus:border-transparent">
-            </div>
+<div class="max-w-lg mx-auto px-4 py-10 sm:py-16">
+    
+    <!-- Top Administrative Metadata Header -->
+    <div class="mb-6 flex items-center justify-between text-xs font-mono text-stone border-b border-[#D8CDBB] dark:border-[#37372F] pb-2">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 bg-rust"></span>
+            <span class="uppercase tracking-widest text-ink dark:text-paper font-semibold">CIVIC ADMINISTRATION DESK</span>
         </div>
-        
-        <div class="space-y-1">
-            <label for="id_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-            <div class="relative">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">lock</span>
-                <input type="password" name="password" id="id_password" required 
-                    class="block w-full pl-10 pr-12 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary focus:border-transparent">
-                <button type="button" onclick="togglePassword()" 
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-                    <span class="material-symbols-outlined">visibility</span>
+        <span>RESTRICTED ACCESS // LEVEL-2</span>
+    </div>
+
+    <!-- Container -->
+    <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-6 sm:p-10 shadow-card relative">
+        <!-- Corner cross markers -->
+        <div class="absolute -top-1.5 -left-1.5 text-rust font-mono text-xs select-none pointer-events-none">+</div>
+        <div class="absolute -top-1.5 -right-1.5 text-rust font-mono text-xs select-none pointer-events-none">+</div>
+        <div class="absolute -bottom-1.5 -left-1.5 text-rust font-mono text-xs select-none pointer-events-none">+</div>
+        <div class="absolute -bottom-1.5 -right-1.5 text-rust font-mono text-xs select-none pointer-events-none">+</div>
+
+        <!-- Header -->
+        <div class="mb-6 pb-4 border-b border-[#D8CDBB] dark:border-[#3E3E34]">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-khadi dark:bg-[#1E1E19] border border-[#D8CDBB] dark:border-[#3E3E34] p-1 flex items-center justify-center text-rust">
+                    <span class="material-symbols-outlined text-xl notranslate" translate="no">admin_panel_settings</span>
+                </div>
+                <div>
+                    <h1 class="font-serif text-2xl font-bold text-ink dark:text-paper leading-tight">
+                        Officer Administration Desk
+                    </h1>
+                    <span class="text-xs text-stone uppercase tracking-wider block">
+                        ಪಂಚಾಯತಿ ಅಧಿಕಾರಿ ಮತ್ತು ಆಡಳಿತ ಲಾಗಿನ್
+                    </span>
+                </div>
+            </div>
+            <p class="text-xs text-charcoal dark:text-stone mt-2">
+                Authorized entry point for Panchayat Development Officers (PDO), Village Accountants, and Administrative Staff.
+            </p>
+        </div>
+
+        <form method="post" autocomplete="off" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label for="id_username" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Officer Username / Staff ID <span class="text-rust">*</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone">
+                        <span class="material-symbols-outlined text-base notranslate" translate="no">badge</span>
+                    </div>
+                    <input type="text" name="username" id="id_username" maxlength="150" required
+                        class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust transition-colors"
+                        placeholder="e.g. officer_demo">
+                </div>
+            </div>
+
+            <div>
+                <label for="id_password" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Officer Password <span class="text-rust">*</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone">
+                        <span class="material-symbols-outlined text-base notranslate" translate="no">lock</span>
+                    </div>
+                    <input type="password" name="password" id="id_password" required
+                        class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full pl-9 pr-10 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust transition-colors"
+                        placeholder="Enter officer credentials">
+                    <button type="button" onclick="toggleOfficerPassword()"
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-stone hover:text-ink dark:hover:text-paper"
+                        aria-label="Toggle password visibility">
+                        <span class="material-symbols-outlined text-base notranslate" id="officerPwIcon" translate="no">visibility</span>
+                    </button>
+                </div>
+            </div>
+
+            {% if messages %}
+            <div class="space-y-2">
+                {% for message in messages %}
+                <div class="p-3 border {% if message.tags == 'error' %}border-civic-red bg-[#FDF2F2] dark:bg-[#2D1616] text-civic-red{% else %}border-rust bg-surface text-ink{% endif %} text-xs flex items-start gap-2">
+                    <span class="material-symbols-outlined text-sm notranslate shrink-0" translate="no">{% if message.tags == 'error' %}error{% else %}info{% endif %}</span>
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if form.errors %}
+            <div class="p-3 border border-civic-red bg-[#FDF2F2] dark:bg-[#2D1616] text-civic-red text-xs">
+                {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+                {% empty %}
+                <p>Authentication failure. Verify credentials.</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="pt-2">
+                <button type="submit"
+                    class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-rust hover:bg-rust-dark text-paper text-xs sm:text-sm font-semibold uppercase tracking-wider border border-rust transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-base notranslate" translate="no">login</span>
+                    <span>Authenticate Officer Access</span>
                 </button>
             </div>
-        </div>
+        </form>
 
-        {% if form.errors %}
-        <div class="bg-red-50 dark:bg-red-900/50 text-red-600 dark:text-red-400 text-sm rounded-lg p-3">
-            {% for error in form.non_field_errors %}
-            <p>{{ error }}</p>
-            {% endfor %}
+        <div class="mt-6 pt-4 border-t border-[#D8CDBB] dark:border-[#3E3E34] text-center text-xs">
+            <span class="text-charcoal dark:text-stone">Looking for Citizen portal?</span>
+            <a href="{% url 'login' %}" class="font-semibold text-rust hover:text-rust-dark hover:underline ml-1">
+                Citizen Sign In
+            </a>
         </div>
-        {% endif %}
-
-        <button type="submit" 
-            class="w-full flex items-center justify-center px-4 py-3 rounded-lg bg-primary text-white text-base font-semibold hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-            <span class="material-symbols-outlined mr-2">admin_panel_settings</span>
-            Login as Officer/Admin
-        </button>
-    </form>
+    </div>
 </div>
-    <script>
-    function togglePassword() {
-        const input = document.getElementById('id_password');
-        const icon = document.querySelector('button[onclick="togglePassword()"] .material-symbols-outlined');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.textContent = 'visibility_off';
-        } else {
-            input.type = 'password';
-            icon.textContent = 'visibility';
-        }
+
+<script>
+function toggleOfficerPassword() {
+    const input = document.getElementById('id_password');
+    const icon = document.getElementById('officerPwIcon');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+    } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
     }
-    </script>
-</main>
-<footer class="mt-8 text-center">
-    <p class="text-sm text-gray-600 dark:text-gray-400">
-        Not an officer? <a class="font-medium text-primary hover:underline" href="{% url 'login' %}">User Login</a>
-    </p>
-</footer>
-</div>
-</div>
+}
+</script>
 {% endblock %}

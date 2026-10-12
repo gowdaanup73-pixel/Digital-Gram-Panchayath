@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from .models import Profile, Complaint, Application, Service
-from .validators import validate_complaint_attachment, validate_aadhar_number
+from .validators import validate_complaint_attachment, validate_aadhar_number, mask_aadhar
 
 class CustomUserCreationForm(UserCreationForm):
     """
@@ -21,11 +21,11 @@ class CustomUserCreationForm(UserCreationForm):
         for field in ['username', 'email', 'password1', 'password2']:
             if field in self.fields:
                 self.fields[field].widget.attrs.update({
-                    'class': 'block w-full pl-11 pr-3 py-2 sm:text-sm border-gray-300 dark:border-gray-600 rounded-md focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white dark:placeholder-gray-400',
+                    'class': 'block w-full px-3 py-2.5 text-xs sm:text-sm bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust transition-colors placeholder:text-stone',
                 })
         self.fields['username'].widget.attrs['placeholder'] = 'Enter your username'
         self.fields['email'].widget.attrs['placeholder'] = 'Enter your email address'
-        self.fields['password1'].widget.attrs['placeholder'] = 'Create a strong password (min 8 characters)'
+        self.fields['password1'].widget.attrs['placeholder'] = 'Create strong password (min 8 characters)'
         self.fields['password2'].widget.attrs['placeholder'] = 'Confirm your password'
 
     def save(self, commit=True):
@@ -51,7 +51,7 @@ class UserUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({
-                'class': 'block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white'
+                'class': 'block w-full px-3 py-2.5 text-xs sm:text-sm bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust transition-colors'
             })
 
 
@@ -60,7 +60,21 @@ class ProfileUpdateForm(forms.ModelForm):
         widget=forms.DateInput(attrs={'type': 'date'}),
         required=False
     )
-    
+    aadhar_number = forms.CharField(
+        max_length=20,
+        required=False,
+        label="Aadhaar Reference Number",
+        help_text=(
+            "12-digit Aadhaar number. Spaces and hyphens are accepted. "
+            "ಆಧಾರ್ ಸಂಖ್ಯೆ. आधार संख्या।"
+        ),
+        widget=forms.TextInput(attrs={
+            'autocomplete': 'off',
+            'inputmode': 'numeric',
+            'id': 'id_aadhar_number',
+        }),
+    )
+
     class Meta:
         model = Profile
         fields = ['phone_number', 'address', 'aadhar_number', 'date_of_birth']
@@ -69,12 +83,21 @@ class ProfileUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({
-                'class': 'block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white'
+                'class': 'block w-full px-3 py-2.5 text-xs sm:text-sm bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust transition-colors'
             })
+        # Show masked Aadhaar in the input when an existing value is stored
+        if self.instance and self.instance.pk and self.instance.aadhar_number:
+            self.initial['aadhar_number'] = mask_aadhar(self.instance.aadhar_number)
 
     def clean_aadhar_number(self):
         aadhar = self.cleaned_data.get('aadhar_number', '').strip()
+        # If user submitted the masked placeholder unchanged, keep existing value
+        if aadhar and aadhar.startswith('XXXX') and self.instance and self.instance.pk:
+            existing = self.instance.aadhar_number
+            if existing:
+                return existing  # Return persisted real value unchanged
         if aadhar:
+            # Normalise separators before validation
             validate_aadhar_number(aadhar)
         return aadhar
 

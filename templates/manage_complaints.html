@@ -1,110 +1,118 @@
 {% extends 'base.html' %}
+{% block title %}Manage Grievances Queue · Digital Gram Panchayat{% endblock %}
+
 {% block content %}
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <header class="bg-white dark:bg-gray-800 shadow">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Manage Complaints</h1>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    
+    <!-- Top Administrative Metadata Header -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-stone border-b border-[#D8CDBB] dark:border-[#37372F] pb-2">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 bg-rust"></span>
+            <span class="uppercase tracking-widest text-ink dark:text-paper font-semibold">GRIEVANCE REDRESSAL ADJUDICATION DESK</span>
+            <span class="text-stone">/</span>
+            <span class="uppercase">SEC-COMPLAINTS-TRIAGE</span>
         </div>
-    </header>
+        <div class="flex items-center gap-3">
+            <span>OFFICIAL AUDIT LOG ENABLED</span>
+            <span class="hidden sm:inline">·</span>
+            <span>SAKALA TIME-BOUND REDRESSAL</span>
+        </div>
+    </div>
 
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {% if messages %}
-        {% for message in messages %}
-        <div class="mb-4 bg-green-50 dark:bg-green-900/50 p-4 rounded-lg">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <span class="material-symbols-outlined text-green-400">check_circle</span>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-green-800 dark:text-green-200">{{ message }}</p>
-                </div>
+    <!-- Container -->
+    <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-6 shadow-card">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D8CDBB] dark:border-[#3E3E34] mb-6">
+            <div>
+                <h1 class="font-serif text-xl sm:text-2xl font-bold text-ink dark:text-paper">
+                    Citizen Grievances Triage Queue
+                </h1>
+                <p class="text-xs text-charcoal dark:text-stone mt-0.5">
+                    Review public complaints, dispatch municipal action reports, and update statutory resolution states.
+                </p>
             </div>
+            <a href="{% url 'officer_dashboard' %}" class="px-3 py-1.5 bg-paper dark:bg-[#20201B] hover:bg-khadi text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone border border-[#D8CDBB] dark:border-[#3E3E34] transition-colors flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm notranslate" translate="no">arrow_back</span>
+                <span>Officer Desk</span>
+            </a>
         </div>
-        {% endfor %}
-        {% endif %}
 
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Category</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Subject</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Description</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Location</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        {% for complaint in complaints %}
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <a href="{% url 'view_profile' username=complaint.user.username %}" 
-                                    class="text-primary hover:text-primary/90">
-                                    {{ complaint.user.username }}
-                                </a>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {{ complaint.get_category_display }}
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                <div class="max-w-xs truncate">{{ complaint.subject }}</div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                <div class="max-w-xs truncate">{{ complaint.description }}</div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                <div class="max-w-xs truncate">{{ complaint.location }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    {% if complaint.status == 'pending' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-400
-                                    {% elif complaint.status == 'in_progress' %}bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-400
-                                    {% elif complaint.status == 'resolved' %}bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400
-                                    {% else %}bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-400{% endif %}">
-                                    {{ complaint.get_status_display }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                {% if complaint.status == 'pending' or complaint.status == 'in_progress' %}
-                                <form method="post" class="flex items-center space-x-2">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="complaint_id" value="{{ complaint.id }}">
-                                    <input type="text" name="remarks" placeholder="Add remarks"
-                                        class="block w-40 text-sm border-gray-300 dark:border-gray-600 rounded-md shadow-sm
-                                        focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white">
-                                    <select name="action"
-                                        class="block w-32 text-sm border-gray-300 dark:border-gray-600 rounded-md shadow-sm
-                                        focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white">
-                                        <option value="in_progress">In Progress</option>
-                                        <option value="resolved">Resolve</option>
-                                        <option value="rejected">Reject</option>
-                                    </select>
-                                    <button type="submit"
-                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md
-                                        text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2
-                                        focus:ring-primary dark:focus:ring-offset-gray-900">
-                                        Update
-                                    </button>
-                                </form>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                                <span class="material-symbols-outlined text-4xl mb-2">inbox</span>
-                                <p>No complaints found</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        <div class="overflow-x-auto border border-[#D8CDBB] dark:border-[#3E3E34]">
+            <table class="min-w-full divide-y divide-[#D8CDBB] dark:divide-[#3E3E34] text-xs">
+                <thead class="bg-khadi dark:bg-[#1E1E19] text-stone font-mono uppercase tracking-wider text-[11px]">
+                    <tr>
+                        <th class="px-4 py-2.5 text-left">Citizen</th>
+                        <th class="px-4 py-2.5 text-left">Category</th>
+                        <th class="px-4 py-2.5 text-left">Subject & Details</th>
+                        <th class="px-4 py-2.5 text-left">Location</th>
+                        <th class="px-4 py-2.5 text-left">Status</th>
+                        <th class="px-4 py-2.5 text-left">Triage Action</th>
+                        <th class="px-4 py-2.5 text-left">Delete</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#D8CDBB] dark:divide-[#3E3E34] bg-paper dark:bg-[#25251F]">
+                    {% for complaint in complaints %}
+                    <tr class="hover:bg-khadi/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-bold">
+                            <a href="{% url 'view_profile' username=complaint.user.username %}" class="text-rust hover:underline">
+                                {{ complaint.user.username }}
+                            </a>
+                        </td>
+                        <td class="px-4 py-3 text-charcoal dark:text-stone">{{ complaint.get_category_display }}</td>
+                        <td class="px-4 py-3 max-w-xs">
+                            <div class="font-bold text-ink dark:text-paper truncate">{{ complaint.subject }}</div>
+                            <div class="text-[11px] text-stone truncate mt-0.5">{{ complaint.description }}</div>
+                        </td>
+                        <td class="px-4 py-3 text-charcoal dark:text-stone max-w-xs truncate">{{ complaint.location }}</td>
+                        <td class="px-4 py-3">
+                            <span class="inline-block px-2 py-0.5 text-[10px] font-mono uppercase font-bold tracking-wider border
+                                {% if complaint.status == 'pending' %}border-civic-amber text-civic-amber bg-amber-50 dark:bg-amber-950/20
+                                {% elif complaint.status == 'in_progress' %}border-charcoal text-charcoal bg-stone/20 dark:text-paper
+                                {% elif complaint.status == 'resolved' %}border-civic-green text-civic-green bg-green-50 dark:bg-green-950/20
+                                {% else %}border-civic-red text-civic-red bg-red-50 dark:bg-red-950/20{% endif %}">
+                                {{ complaint.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            {% if complaint.status == 'pending' or complaint.status == 'in_progress' %}
+                            <form method="post" action="{% url 'update_complaint_status' complaint.id %}" class="flex items-center gap-1.5">
+                                {% csrf_token %}
+                                <input type="hidden" name="complaint_id" value="{{ complaint.id }}">
+                                <input type="text" name="remarks" placeholder="Action remarks"
+                                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper px-2 py-1 text-xs border border-[#D8CDBB] dark:border-[#3E3E34] w-36 rounded-none focus:border-rust">
+                                <select name="action"
+                                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper px-2 py-1 text-xs border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust">
+                                    <option value="in_progress">In Progress</option>
+                                    <option value="resolved">Resolved</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                                <button type="submit"
+                                    class="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider bg-rust hover:bg-rust-dark text-paper border border-rust transition-colors shadow-sm">
+                                    Update
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="font-mono text-stone text-[11px]">{{ complaint.admin_remarks|default:"Closed" }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <form method="post" action="{% url 'delete_complaint' complaint.id %}" onsubmit="return confirm('Delete this complaint entry?');">
+                                {% csrf_token %}
+                                <button type="submit" class="text-stone hover:text-civic-red transition-colors" title="Delete Complaint">
+                                    <span class="material-symbols-outlined text-base notranslate" translate="no">delete</span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-stone font-mono uppercase text-xs">
+                            No citizen grievances pending triage
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </main>
+    </div>
 </div>
 {% endblock %}

@@ -1,83 +1,94 @@
 {% extends 'base.html' %}
+{% block title %}Citizen Grievances · Digital Gram Panchayat{% endblock %}
+
 {% block content %}
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <header class="bg-white dark:bg-gray-800 shadow">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">My Complaints</h1>
-            <a href="{% url 'submit_complaint' %}"
-                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium
-                text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary
-                dark:focus:ring-offset-gray-900">
-                <span class="material-symbols-outlined mr-2">add</span>
-                New Complaint
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    
+    <!-- Top Administrative Metadata Header -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-stone border-b border-[#D8CDBB] dark:border-[#37372F] pb-2">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 bg-rust"></span>
+            <span class="uppercase tracking-widest text-ink dark:text-paper font-semibold">GRIEVANCE REDRESSAL RECORD</span>
+            <span class="text-stone">/</span>
+            <span class="uppercase">WARD CITIZEN LOG</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{% url 'submit_complaint' %}" class="text-rust hover:underline flex items-center gap-1 font-semibold uppercase">
+                <span class="material-symbols-outlined text-xs notranslate" translate="no">add</span>
+                <span>File Grievance</span>
             </a>
         </div>
-    </header>
+    </div>
 
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Category</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Subject</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Location</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Submitted</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                            {% for complaint in complaints %}
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">#{{ complaint.id }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ complaint.get_category_display }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                    <div class="max-w-xs truncate">{{ complaint.subject }}</div>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                    <div class="max-w-xs truncate">{{ complaint.location }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        {% if complaint.status == 'pending' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-400
-                                        {% elif complaint.status == 'in_progress' %}bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-400
-                                        {% elif complaint.status == 'resolved' %}bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400
-                                        {% else %}bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-400{% endif %}">
-                                        {{ complaint.get_status_display }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                    {{ complaint.created_at|date:"M d, Y" }}
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                    {% if complaint.admin_remarks %}
-                                    <div class="max-w-xs truncate">{{ complaint.admin_remarks }}</div>
-                                    {% else %}
-                                    <span class="text-gray-400 dark:text-gray-500">No remarks</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="7" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                                    <span class="material-symbols-outlined text-4xl mb-2">inbox</span>
-                                    <p>No complaints found.</p>
-                                    <a href="{% url 'submit_complaint' %}" class="mt-2 inline-flex items-center text-primary hover:text-primary/90">
-                                        <span class="material-symbols-outlined text-sm mr-1">add</span>
-                                        Submit a complaint
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+    <!-- Grievances Container -->
+    <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-6 shadow-card">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D8CDBB] dark:border-[#3E3E34] mb-6">
+            <div>
+                <h1 class="font-serif text-xl sm:text-2xl font-bold text-ink dark:text-paper">
+                    My Registered Grievances & Redressal Log
+                </h1>
+                <p class="text-xs text-charcoal dark:text-stone mt-0.5">
+                    Official tracking under Karnataka Sakala and Gram Panchayat grievance redressal standards.
+                </p>
             </div>
+            <a href="{% url 'submit_complaint' %}"
+                class="px-4 py-2 bg-rust hover:bg-rust-dark text-paper text-xs font-semibold uppercase tracking-wider border border-rust transition-colors shadow-sm inline-flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm notranslate" translate="no">add_circle</span>
+                <span>New Complaint</span>
+            </a>
         </div>
-    </main>
+
+        <div class="overflow-x-auto border border-[#D8CDBB] dark:border-[#3E3E34]">
+            <table class="min-w-full divide-y divide-[#D8CDBB] dark:divide-[#3E3E34] text-xs">
+                <thead class="bg-khadi dark:bg-[#1E1E19] text-stone font-mono uppercase tracking-wider text-[11px]">
+                    <tr>
+                        <th class="px-4 py-2.5 text-left">Case ID</th>
+                        <th class="px-4 py-2.5 text-left">Category</th>
+                        <th class="px-4 py-2.5 text-left">Subject</th>
+                        <th class="px-4 py-2.5 text-left">Ward / Location</th>
+                        <th class="px-4 py-2.5 text-left">Status</th>
+                        <th class="px-4 py-2.5 text-left">Date Logged</th>
+                        <th class="px-4 py-2.5 text-left">Official Remarks</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#D8CDBB] dark:divide-[#3E3E34] bg-paper dark:bg-[#25251F]">
+                    {% for complaint in complaints %}
+                    <tr class="hover:bg-khadi/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-bold text-rust">#GRIEV-{{ complaint.id|stringformat:"04d" }}</td>
+                        <td class="px-4 py-3 text-charcoal dark:text-stone font-medium">{{ complaint.get_category_display }}</td>
+                        <td class="px-4 py-3 font-medium text-ink dark:text-paper max-w-xs truncate">{{ complaint.subject }}</td>
+                        <td class="px-4 py-3 text-charcoal dark:text-stone max-w-xs truncate">{{ complaint.location }}</td>
+                        <td class="px-4 py-3">
+                            <span class="inline-block px-2 py-0.5 text-[10px] font-mono uppercase font-bold tracking-wider border
+                                {% if complaint.status == 'pending' %}border-civic-amber text-civic-amber bg-amber-50 dark:bg-amber-950/20
+                                {% elif complaint.status == 'in_progress' %}border-charcoal text-charcoal bg-stone/20 dark:text-paper
+                                {% elif complaint.status == 'resolved' %}border-civic-green text-civic-green bg-green-50 dark:bg-green-950/20
+                                {% else %}border-civic-red text-civic-red bg-red-50 dark:bg-red-950/20{% endif %}">
+                                {{ complaint.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 font-mono text-stone whitespace-nowrap">{{ complaint.created_at|date:"d M Y" }}</td>
+                        <td class="px-4 py-3 text-charcoal dark:text-stone max-w-xs truncate">
+                            {% if complaint.admin_remarks %}
+                            <span class="text-xs">{{ complaint.admin_remarks }}</span>
+                            {% else %}
+                            <span class="text-stone font-mono text-[11px]">— Under Review —</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-stone font-mono uppercase text-xs">
+                            No citizen complaints logged.
+                            <a href="{% url 'submit_complaint' %}" class="block mt-2 text-rust font-semibold hover:underline">
+                                File a grievance with the Gram Panchayat
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

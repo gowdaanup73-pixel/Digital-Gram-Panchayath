@@ -15,7 +15,11 @@ media/
 venv/
 env/
 ENV/
+# Secrets and OAuth credentials
 .env
+client_secret*.json
+*.pem
+*.key
 
 # OS generated files
 .DS_Store

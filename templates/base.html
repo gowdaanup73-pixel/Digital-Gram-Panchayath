@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Digital Gram Panchayat</title>
-    <!-- Bootstrap removed: using TailwindCSS only -->
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <!-- TailwindCSS -->
+    <title>{% block title %}Digital Gram Panchayat · e-Governance Portal{% endblock %}</title>
+
+    <!-- Google Fonts: Editorial Serif, Clean Civic Sans, Kannada & Devanagari Scripts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@400;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+    <!-- TailwindCSS with custom Khadi, Ink, and Rust Design Tokens -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
       tailwind.config = {
@@ -17,271 +21,494 @@
         theme: {
           extend: {
             colors: {
-              "primary": "#1173d4",
-              "background-light": "#f6f7f8",
-              "background-dark": "#101922",
+              // Khadi, Ink, and Rust Palette
+              khadi: "#F1E8D8",
+              paper: "#FAF6EE",
+              ink: "#25251F",
+              charcoal: "#37372F",
+              rust: "#A34F38",
+              "rust-dark": "#8C402C",
+              "rust-light": "#F5ECE8",
+              stone: "#B9AE9B",
+              fine: "#D8CDBB",
+              surface: "#E8DECE",
+              primary: "#A34F38", // Replaced blue primary with Rust
+              "primary-hover": "#8C402C",
+              "civic-green": "#2D6A4F",
+              "civic-amber": "#9C631A",
+              "civic-red": "#991B1B",
             },
             fontFamily: {
-              "display": ["Public Sans"]
+              serif: ["Fraunces", "Noto Serif Kannada", "Georgia", "serif"],
+              sans: ["Public Sans", "Noto Sans Kannada", "Noto Sans Devanagari", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+              kannada: ["Noto Sans Kannada", "Public Sans", "sans-serif"],
+              kannadaSerif: ["Noto Serif Kannada", "Fraunces", "serif"],
             },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            borderWidth: {
+              "1": "1px",
+              "3": "3px",
+            },
+            boxShadow: {
+              "card": "2px 2px 0px #D8CDBB",
+              "card-lg": "4px 4px 0px #D8CDBB",
+              "card-rust": "3px 3px 0px #A34F38",
+              "inset-fine": "inset 0 0 0 1px #D8CDBB",
+            },
           },
         },
       }
     </script>
-    <link href="https://fonts.googleapis.com/css2?display=swap&family=Public+Sans:wght@400;500;700;900" rel="stylesheet">
+
     <style>
+      :root {
+        --color-khadi: #F1E8D8;
+        --color-paper: #FAF6EE;
+        --color-ink: #25251F;
+        --color-charcoal: #37372F;
+        --color-rust: #A34F38;
+        --color-rust-dark: #8C402C;
+        --color-stone: #B9AE9B;
+        --color-fine: #D8CDBB;
+        --color-surface: #E8DECE;
+      }
+
       body { 
-        min-height: max(884px, 100dvh); 
-        font-family: 'Public Sans', sans-serif;
+        min-height: 100vh;
+        background-color: var(--color-khadi);
+        color: var(--color-ink);
+        font-family: 'Public Sans', 'Noto Sans Kannada', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
         position: relative !important;
         top: 0 !important;
+        line-height: 1.55;
+      }
+
+      /* Critical SVG and Emblem sizing to prevent unstyled flash */
+      svg {
+        max-width: 100%;
+        max-height: 100%;
+      }
+      .w-10 { width: 2.5rem; height: 2.5rem; }
+      .w-11 { width: 2.75rem; height: 2.75rem; }
+      .w-14 { width: 3.5rem; height: 3.5rem; }
+      .w-16 { width: 4rem; height: 4rem; }
+
+      /* Subtle architectural paper texture */
+      .bg-khadi-texture {
+        background-color: #F1E8D8;
+        background-image: 
+          radial-gradient(#D8CDBB 0.75px, transparent 0.75px),
+          linear-gradient(to right, rgba(216, 205, 187, 0.25) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(216, 205, 187, 0.25) 1px, transparent 1px);
+        background-size: 24px 24px, 96px 96px, 96px 96px;
+      }
+
+      /* Dark mode paper adjustments */
+      .dark body {
+        background-color: #20201B;
+        color: #FAF6EE;
+      }
+      .dark .bg-khadi-texture {
+        background-color: #20201B;
+        background-image: radial-gradient(#37372F 0.75px, transparent 0.75px);
+        background-size: 24px 24px;
+      }
+
+      /* Indic script and translation typography improvements */
+      :lang(hi), :lang(kn), .translated-ltr, .translated-rtl {
+        line-height: 1.65;
+      }
+
+      /* Prevent icon ligature translation globally */
+      .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined' !important;
+        font-weight: normal;
+        font-style: normal;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Architectural border lines */
+      .border-fine {
+        border-color: #D8CDBB;
+      }
+      .dark .border-fine {
+        border-color: #3E3E34;
+      }
+
+      /* Double institutional rule */
+      .rule-double {
+        border-top: 1px solid #D8CDBB;
+        border-bottom: 1px solid #D8CDBB;
+        height: 4px;
+      }
+      .dark .rule-double {
+        border-color: #3E3E34;
+      }
+
+      /* Form inputs focus state */
+      input:focus, select:focus, textarea:focus {
+        outline: none !important;
+        border-color: #A34F38 !important;
+        box-shadow: 0 0 0 1px #A34F38 !important;
+      }
+
+      /* Reduced motion preferences */
+      @media (prefers-reduced-motion: reduce) {
+        *, ::before, ::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
       }
 
       /* Hide Google Translate banner and overlays */
-      .goog-te-banner-frame {
+      .goog-te-banner-frame, .goog-te-balloon-frame {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
       }
-
-      .goog-te-balloon-frame {
-        display: none !important;
-      }
-
       body.translated {
         top: 0 !important;
         margin-top: 0 !important;
       }
-
-      /* Hide Google Translate gadget container but keep functionality */
       #google_translate_element {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
         width: 0 !important;
-        overflow: hidden !important;
       }
-
-      /* Hide Google Translate combo box */
-      .goog-te-combo {
+      .goog-te-combo, .goog-te-gadget, .goog-te-gadget-simple, .skiptranslate, .goog-te-spinner-pos, .goog-te-button {
         display: none !important;
       }
-
-      .goog-te-gadget {
-        display: none !important;
-      }
-
-      .goog-te-gadget-simple {
-        display: none !important;
-      }
-
-      /* Prevent layout shift from translation */
       * {
         box-sizing: border-box;
       }
-
-      /* Ensure text doesn't overlap during translation */
-      html body {
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-
-      /* Fix any double text rendering */
-      .skiptranslate {
-        display: none !important;
-      }
-
-      /* Prevent iframe overlay */
-      .goog-te-spinner-pos {
-        display: none !important;
-      }
-
-      /* Hide the "Powered by Google Translate" element */
-      .goog-te-button {
-        display: none !important;
-      }
-
-      /* Ensure clean text rendering */
-      html * {
-        -webkit-user-select: text;
-        user-select: text;
-      }
-      
-      /* Dark mode toggle button */
-      .theme-toggle {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.5rem;
-        color: #9ca3af;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border-radius: 9999px;
-      }
-      
-      .theme-toggle:hover {
-        color: #f3f4f6;
-        background: rgba(31, 41, 55, 0.1);
-      }
-      
-      .dark .theme-toggle:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-      
-      .theme-toggle:active {
-        transform: scale(0.95);
-      }
-      
-      /* Smooth transitions */
-      .transition-colors {
-        transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
-      }
     </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-khadi-texture min-h-screen flex flex-col antialiased text-ink dark:text-paper selection:bg-rust selection:text-paper">
+
+    <!-- Top Institutional Administrative Bar -->
+    <header class="w-full bg-[#E8DECE] dark:bg-[#1C1C17] border-b border-[#D8CDBB] dark:border-[#37372F] text-[11px] font-medium tracking-wider text-charcoal dark:text-stone z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex justify-between items-center">
+            <div class="flex items-center gap-2 truncate">
+                <span class="inline-block w-2 h-2 bg-rust rounded-none"></span>
+                <span class="font-semibold uppercase tracking-widest text-ink dark:text-paper">ಕರ್ನಾಟಕ ಸರ್ಕಾರ · Government of Karnataka</span>
+                <span class="hidden md:inline text-stone dark:text-charcoal">|</span>
+                <span class="hidden md:inline truncate uppercase text-stone dark:text-stone">Department of Rural Development & Panchayat Raj</span>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <!-- Language Selector -->
+                <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs notranslate text-stone" translate="no">translate</span>
+                    <select id="languageSelector" class="bg-paper dark:bg-charcoal text-ink dark:text-paper text-xs px-2 py-0.5 border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none cursor-pointer focus:border-rust" title="Select Portal Language">
+                        <option value="en">English (EN)</option>
+                        <option value="kn">ಕನ್ನಡ (KN)</option>
+                        <option value="hi">हिन्दी (HI)</option>
+                    </select>
+                </div>
+                <!-- Hidden Google Translate container -->
+                <div id="google_translate_element" class="hidden"></div>
+                <!-- Dark / Light theme toggle -->
+                <button id="themeToggle" class="p-1 hover:text-rust transition-colors text-charcoal dark:text-stone" title="Toggle Theme" aria-label="Toggle Theme">
+                    <span class="material-symbols-outlined text-sm dark:hidden notranslate" translate="no">dark_mode</span>
+                    <span class="material-symbols-outlined text-sm hidden dark:inline notranslate" translate="no">light_mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Civic Navigation Bar -->
+    <nav class="bg-paper/95 dark:bg-[#25251F]/95 backdrop-blur-sm border-b border-[#D8CDBB] dark:border-[#37372F] sticky top-0 z-30 transition-colors shadow-[0_2px_10px_rgba(37,37,31,0.03)]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 sm:h-20">
+                
+                <!-- Institutional Crest & Wordmark -->
+                <a href="{% if user.is_authenticated %}{% url 'user_dashboard' %}{% else %}{% url 'login' %}{% endif %}" class="flex items-center gap-3.5 group text-left">
+                    <!-- Geometric Panchayat Emblem SVG -->
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 bg-paper dark:bg-[#20201B] border border-[#D8CDBB] dark:border-[#3E3E34] p-1 flex items-center justify-center text-rust group-hover:border-rust transition-colors shadow-sm">
+                        <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Outer concentric ring -->
+                            <circle cx="50" cy="50" r="46" stroke="#A34F38" stroke-width="2.5" stroke-dasharray="2 2"/>
+                            <circle cx="50" cy="50" r="41" stroke="#25251F" class="dark:stroke-[#FAF6EE]" stroke-width="1.2"/>
+                            <!-- Architectural Kalasa / Temple Gopura stepped finial -->
+                            <path d="M50 14L45 23H55L50 14Z" fill="#A34F38"/>
+                            <rect x="47.5" y="23" width="5" height="3" fill="#A34F38"/>
+                            <path d="M38 29H62V33H38V29Z" fill="#25251F" class="dark:fill-[#FAF6EE]"/>
+                            <!-- Stepped arch (Kalyani motif) -->
+                            <path d="M32 37H68V41H32V37Z" fill="#A34F38"/>
+                            <!-- Central Ashoka / Karnataka Solar rays -->
+                            <circle cx="50" cy="55" r="14" stroke="#A34F38" stroke-width="1.5"/>
+                            <circle cx="50" cy="55" r="4" fill="#A34F38"/>
+                            <!-- Ray spikes -->
+                            <line x1="50" y1="41" x2="50" y2="45" stroke="#A34F38" stroke-width="1.5"/>
+                            <line x1="50" y1="65" x2="50" y2="69" stroke="#A34F38" stroke-width="1.5"/>
+                            <line x1="36" y1="55" x2="40" y2="55" stroke="#A34F38" stroke-width="1.5"/>
+                            <line x1="60" y1="55" x2="64" y2="55" stroke="#A34F38" stroke-width="1.5"/>
+                            <!-- Agrarian paddy stalks framing bottom -->
+                            <path d="M22 65C24 74 34 81 50 82C66 81 76 74 78 65" stroke="#25251F" class="dark:stroke-[#FAF6EE]" stroke-width="1.8" stroke-linecap="round"/>
+                            <path d="M26 69L30 65M32 73L36 68M68 68L72 73M70 65L74 69" stroke="#A34F38" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+
+                    <!-- Project Titles -->
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-serif font-bold text-base sm:text-lg tracking-tight text-ink dark:text-paper group-hover:text-rust transition-colors uppercase">
+                                Digital Gram Panchayat
+                            </span>
+                        </div>
+                        <span class="text-[11px] font-medium tracking-wide text-stone dark:text-stone uppercase">
+                            ಗ್ರಾಮ ಪಂಚಾಯತಿ ಇ-ಆಡಳಿತ ವೇದಿಕೆ · Civic Governance
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <div class="hidden md:flex items-center gap-1 lg:gap-2">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'user_dashboard' %}" class="px-3 py-2 text-xs font-semibold tracking-wider uppercase text-charcoal dark:text-stone hover:text-rust dark:hover:text-rust hover:bg-khadi dark:hover:bg-charcoal transition-colors border-b-2 {% if request.resolver_match.url_name == 'user_dashboard' %}border-rust text-rust font-bold{% else %}border-transparent{% endif %} flex items-center gap-1.5 whitespace-nowrap">
+                            <span class="text-[10px] text-stone font-mono">01.</span>
+                            <span class="notranslate material-symbols-outlined text-sm" translate="no">dashboard</span>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="{% url 'services' %}" class="px-3 py-2 text-xs font-semibold tracking-wider uppercase text-charcoal dark:text-stone hover:text-rust dark:hover:text-rust hover:bg-khadi dark:hover:bg-charcoal transition-colors border-b-2 {% if request.resolver_match.url_name == 'services' or request.resolver_match.url_name == 'apply_service' %}border-rust text-rust font-bold{% else %}border-transparent{% endif %} flex items-center gap-1.5 whitespace-nowrap">
+                            <span class="text-[10px] text-stone font-mono">02.</span>
+                            <span class="notranslate material-symbols-outlined text-sm" translate="no">assignment</span>
+                            <span>Services</span>
+                        </a>
+                        <a href="{% url 'view_complaints' %}" class="px-3 py-2 text-xs font-semibold tracking-wider uppercase text-charcoal dark:text-stone hover:text-rust dark:hover:text-rust hover:bg-khadi dark:hover:bg-charcoal transition-colors border-b-2 {% if request.resolver_match.url_name == 'view_complaints' or request.resolver_match.url_name == 'submit_complaint' %}border-rust text-rust font-bold{% else %}border-transparent{% endif %} flex items-center gap-1.5 whitespace-nowrap">
+                            <span class="text-[10px] text-stone font-mono">03.</span>
+                            <span class="notranslate material-symbols-outlined text-sm" translate="no">gavel</span>
+                            <span>Complaints</span>
+                        </a>
+                        <a href="{% url 'voting_sessions' %}" class="px-3 py-2 text-xs font-semibold tracking-wider uppercase text-charcoal dark:text-stone hover:text-rust dark:hover:text-rust hover:bg-khadi dark:hover:bg-charcoal transition-colors border-b-2 {% if request.resolver_match.url_name == 'voting_sessions' or request.resolver_match.url_name == 'vote' %}border-rust text-rust font-bold{% else %}border-transparent{% endif %} flex items-center gap-1.5 whitespace-nowrap">
+                            <span class="text-[10px] text-stone font-mono">04.</span>
+                            <span class="notranslate material-symbols-outlined text-sm" translate="no">how_to_vote</span>
+                            <span>Elections</span>
+                        </a>
+                        {% if user.is_staff or user.profile.role == 'officer' %}
+                        <a href="{% url 'officer_dashboard' %}" class="px-3 py-2 text-xs font-semibold tracking-wider uppercase text-rust hover:bg-rust-light transition-colors border border-rust flex items-center gap-1.5 whitespace-nowrap">
+                            <span class="notranslate material-symbols-outlined text-sm" translate="no">admin_panel_settings</span>
+                            <span>Officer Desk</span>
+                        </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'services' %}" class="px-3 py-2 text-xs font-semibold tracking-wider uppercase text-charcoal dark:text-stone hover:text-rust transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                            <span class="notranslate material-symbols-outlined text-sm" translate="no">assignment</span>
+                            <span>Public Schemes</span>
+                        </a>
+                        <a href="{% url 'roles_responsibilities' %}" class="px-3 py-2 text-xs font-semibold tracking-wider uppercase text-charcoal dark:text-stone hover:text-rust transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                            <span class="notranslate material-symbols-outlined text-sm" translate="no">account_balance</span>
+                            <span>GP Charter</span>
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Right Side Controls & Session -->
+                <div class="flex items-center gap-3">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' %}" class="hidden sm:flex items-center gap-2 px-2.5 py-1.5 bg-[#E8DECE] dark:bg-[#37372F] border border-[#D8CDBB] dark:border-[#3E3E34] text-xs font-medium text-ink dark:text-paper hover:border-rust transition-colors" title="Citizen Profile">
+                            <span class="material-symbols-outlined text-sm text-rust notranslate" translate="no">badge</span>
+                            <span class="font-mono text-[11px] truncate max-w-[100px]">{{ user.username }}</span>
+                        </a>
+                        <a href="{% url 'logout' %}" class="px-3 py-1.5 text-xs font-semibold tracking-wider uppercase bg-rust hover:bg-rust-dark text-paper transition-colors flex items-center gap-1 border border-rust shadow-sm">
+                            <span class="material-symbols-outlined text-sm notranslate" translate="no">logout</span>
+                            <span class="hidden sm:inline">Logout</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="px-3.5 py-1.5 text-xs font-semibold tracking-wider uppercase bg-rust hover:bg-rust-dark text-paper transition-colors flex items-center gap-1.5 border border-rust shadow-sm">
+                            <span class="material-symbols-outlined text-sm notranslate" translate="no">login</span>
+                            <span>Sign In</span>
+                        </a>
+                        <a href="{% url 'register' %}" class="hidden sm:inline-flex px-3.5 py-1.5 text-xs font-semibold tracking-wider uppercase bg-paper dark:bg-charcoal text-ink dark:text-paper hover:border-rust transition-colors border border-[#D8CDBB] dark:border-[#3E3E34]">
+                            <span>Register</span>
+                        </a>
+                    {% endif %}
+
+                    <!-- Mobile Navigation Menu Toggle Button -->
+                    <button id="mobileNavToggle" class="md:hidden p-2 text-ink dark:text-paper hover:text-rust border border-[#D8CDBB] dark:border-[#3E3E34]" aria-label="Toggle Mobile Menu">
+                        <span class="material-symbols-outlined text-xl notranslate" translate="no">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobileNavDrawer" class="hidden md:hidden bg-paper dark:bg-[#25251F] border-b border-[#D8CDBB] dark:border-[#37372F] px-4 pt-2 pb-4 space-y-2">
+            {% if user.is_authenticated %}
+                <a href="{% url 'user_dashboard' %}" class="block px-3 py-2 text-xs font-semibold uppercase tracking-wider text-ink dark:text-paper hover:bg-khadi border-l-2 {% if request.resolver_match.url_name == 'user_dashboard' %}border-rust text-rust bg-khadi{% else %}border-transparent{% endif %}">
+                    01. Dashboard
+                </a>
+                <a href="{% url 'services' %}" class="block px-3 py-2 text-xs font-semibold uppercase tracking-wider text-ink dark:text-paper hover:bg-khadi border-l-2 {% if request.resolver_match.url_name == 'services' %}border-rust text-rust bg-khadi{% else %}border-transparent{% endif %}">
+                    02. Civic Services
+                </a>
+                <a href="{% url 'view_complaints' %}" class="block px-3 py-2 text-xs font-semibold uppercase tracking-wider text-ink dark:text-paper hover:bg-khadi border-l-2 {% if request.resolver_match.url_name == 'view_complaints' %}border-rust text-rust bg-khadi{% else %}border-transparent{% endif %}">
+                    03. Complaints & Grievances
+                </a>
+                <a href="{% url 'voting_sessions' %}" class="block px-3 py-2 text-xs font-semibold uppercase tracking-wider text-ink dark:text-paper hover:bg-khadi border-l-2 {% if request.resolver_match.url_name == 'voting_sessions' %}border-rust text-rust bg-khadi{% else %}border-transparent{% endif %}">
+                    04. Civic Elections
+                </a>
+                <a href="{% url 'profile' %}" class="block px-3 py-2 text-xs font-semibold uppercase tracking-wider text-ink dark:text-paper hover:bg-khadi border-l-2 {% if request.resolver_match.url_name == 'profile' %}border-rust text-rust bg-khadi{% else %}border-transparent{% endif %}">
+                    05. Citizen Profile ({{ user.username }})
+                </a>
+                {% if user.is_staff or user.profile.role == 'officer' %}
+                <a href="{% url 'officer_dashboard' %}" class="block px-3 py-2 text-xs font-semibold uppercase tracking-wider text-rust bg-rust-light border-l-2 border-rust">
+                    Officer Administration Desk
+                </a>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'services' %}" class="block px-3 py-2 text-xs font-semibold uppercase tracking-wider text-ink dark:text-paper hover:bg-khadi">
+                    Public Services Directory
+                </a>
+                <a href="{% url 'roles_responsibilities' %}" class="block px-3 py-2 text-xs font-semibold uppercase tracking-wider text-ink dark:text-paper hover:bg-khadi">
+                    Citizen Charter & GP Roles
+                </a>
+                <a href="{% url 'register' %}" class="block px-3 py-2 text-xs font-semibold uppercase tracking-wider text-rust hover:bg-khadi">
+                    Create New Account
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Civic Flash Messages (Memorandum Style) -->
+    {% if messages %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 w-full">
+        <div class="space-y-2">
+            {% for message in messages %}
+            <div class="p-3.5 border border-[#D8CDBB] dark:border-[#3E3E34] bg-paper dark:bg-[#25251F] shadow-sm flex items-start justify-between gap-3 {% if message.tags == 'success' %}border-l-4 border-l-civic-green{% elif message.tags == 'error' %}border-l-4 border-l-civic-red{% else %}border-l-4 border-l-rust{% endif %}">
+                <div class="flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-lg notranslate {% if message.tags == 'success' %}text-civic-green{% elif message.tags == 'error' %}text-civic-red{% else %}text-rust{% endif %}" translate="no">
+                        {% if message.tags == 'success' %}verified{% elif message.tags == 'error' %}warning{% else %}info{% endif %}
+                    </span>
+                    <div>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-stone block">Official Notice //</span>
+                        <p class="text-xs sm:text-sm font-medium text-ink dark:text-paper">{{ message }}</p>
+                    </div>
+                </div>
+                <button onclick="this.closest('div.border').remove()" class="text-stone hover:text-ink dark:hover:text-paper text-sm">
+                    <span class="material-symbols-outlined text-base notranslate" translate="no">close</span>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Content Injection Block -->
+    <main class="flex-grow w-full">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Institutional Civic Footer -->
+    <footer class="w-full bg-[#E8DECE] dark:bg-[#1C1C17] border-t border-[#D8CDBB] dark:border-[#37372F] mt-16 text-charcoal dark:text-stone">
+        <!-- Double Rule Divider -->
+        <div class="rule-double"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                
+                <!-- Institutional Column -->
+                <div class="md:col-span-2 space-y-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-7 h-7 bg-paper dark:bg-charcoal border border-[#D8CDBB] dark:border-[#3E3E34] p-1 flex items-center justify-center text-rust">
+                            <span class="material-symbols-outlined text-base notranslate" translate="no">account_balance</span>
+                        </div>
+                        <span class="font-serif font-bold text-base text-ink dark:text-paper uppercase tracking-tight">
+                            Digital Gram Panchayat
+                        </span>
+                    </div>
+                    <p class="text-xs leading-relaxed text-charcoal dark:text-stone max-w-md">
+                        Official civic services and local self-government digital portal. Designed for transparent governance, public scheme allocation, time-bound grievance redressal, and participatory democracy at the village panchayat tier.
+                    </p>
+                    <div class="pt-2 text-[11px] font-mono text-stone space-y-0.5">
+                        <p>DEPARTMENT OF RURAL DEVELOPMENT & PANCHAYAT RAJ</p>
+                        <p>GOVERNMENT OF KARNATAKA · BANGALORE</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper mb-3 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 bg-rust inline-block"></span>
+                        Civic Portal
+                    </h3>
+                    <ul class="space-y-1.5 text-xs">
+                        <li><a href="{% url 'services' %}" class="hover:text-rust transition-colors">Public Schemes Directory</a></li>
+                        <li><a href="{% url 'roles_responsibilities' %}" class="hover:text-rust transition-colors">Panchayat Charter & Roles</a></li>
+                        <li><a href="{% url 'voting_sessions' %}" class="hover:text-rust transition-colors">Gram Sabha & Elections</a></li>
+                        <li><a href="{% url 'officer_login' %}" class="hover:text-rust transition-colors">Officer & Staff Portal</a></li>
+                    </ul>
+                </div>
+
+                <!-- Governance Compliance -->
+                <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-ink dark:text-paper mb-3 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 bg-rust inline-block"></span>
+                        Statutory Compliance
+                    </h3>
+                    <ul class="space-y-1.5 text-xs text-charcoal dark:text-stone">
+                        <li class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-rust notranslate" translate="no">verified</span> Karnataka Panchayat Raj Act</li>
+                        <li class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-rust notranslate" translate="no">verified</span> Right to Information (RTI)</li>
+                        <li class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-rust notranslate" translate="no">verified</span> Sakala Services Guarantee</li>
+                        <li class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-rust notranslate" translate="no">verified</span> Secure Audit Log Enforced</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Institutional Bar -->
+            <div class="mt-8 pt-6 border-t border-[#D8CDBB] dark:border-[#37372F] flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-stone">
+                <p>© 2026 Digital Gram Panchayat · All Government Rights Reserved.</p>
+                <div class="flex items-center gap-4">
+                    <span>e-Governance Infrastructure</span>
+                    <span>·</span>
+                    <span>Version 2.4.0 (Secure Architecture)</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts: Mobile Navigation & Dark Mode Toggle -->
     <script>
-        // Check initial theme on page load
+        // Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.theme = 'light';
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.theme = 'dark';
+                }
+            });
+        }
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
         }
-    </script>
-</head>
-<body class="bg-background-light dark:bg-background-dark transition-colors">
-    <!-- Navigation Bar -->
-    <nav class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 fixed w-full z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <!-- Logo -->
-                <div class="flex items-center">
-                    <span class="material-symbols-outlined text-primary text-2xl">account_balance</span>
-                    <span class="ml-2 text-gray-900 dark:text-white font-semibold">Digital Gram Panchayat</span>
-                </div>
-                <!-- Nav Links (desktop) -->
-                <div class="hidden md:flex items-center gap-1">
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'user_dashboard' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined text-base">dashboard</span>Dashboard
-                    </a>
-                    <a href="{% url 'services' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined text-base">list_alt</span>Services
-                    </a>
-                    <a href="{% url 'view_complaints' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined text-base">report</span>Complaints
-                    </a>
-                    <a href="{% url 'profile' %}" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined text-base">person</span>Profile
-                    </a>
-                    {% endif %}
-                </div>
-                <!-- Right side controls -->
-                <div class="flex items-center gap-3">
-                    <!-- Language Selector -->
-                    <select id="languageSelector" class="rounded px-2 py-1 text-sm border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white cursor-pointer" title="Select language">
-                        <option value="en" selected>English</option>
-                        <option value="hi">हिन्दी</option>
-                        <option value="kn">ಕನ್ನಡ</option>
-                    </select>
-                    <!-- Hidden Google Translate container -->
-                    <div id="google_translate_element" class="hidden"></div>
-                    <!-- Dark Mode Toggle -->
-                    <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
-                        <span class="material-symbols-outlined dark:hidden" aria-hidden="true">dark_mode</span>
-                        <span class="material-symbols-outlined hidden dark:inline" aria-hidden="true">light_mode</span>
-                    </button>
-                    <!-- Logout Button -->
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'logout' %}" class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors">
-                        <span class="material-symbols-outlined text-base">logout</span>
-                        <span class="hidden sm:inline">Logout</span>
-                    </a>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md transition-colors">
-                        <span class="material-symbols-outlined text-base">login</span>
-                        <span class="hidden sm:inline">Login</span>
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </nav>
-    
-    <!-- Main Content with top padding for nav bar -->
-    <div class="pt-16">
 
-    {% if messages %}
-    <div class="fixed right-4 top-20 z-50 flex flex-col gap-2 max-w-md animate-slide-in">
-        {% for message in messages %}
-        <div class="rounded-lg p-4 {% if message.tags == 'success' %}bg-green-500/10 text-green-500 dark:bg-green-500/20 dark:text-green-400{% else %}bg-red-500/10 text-red-500 dark:bg-red-500/20 dark:text-red-400{% endif %} shadow-lg backdrop-blur-sm border {% if message.tags == 'success' %}border-green-500/10 dark:border-green-500/20{% else %}border-red-500/10 dark:border-red-500/20{% endif %}">
-            <div class="flex items-center">
-                <div class="flex-shrink-0">
-                    {% if message.tags == 'success' %}
-                    <span class="material-symbols-outlined text-green-500 dark:text-green-400">check_circle</span>
-                    {% else %}
-                    <span class="material-symbols-outlined text-red-500 dark:text-red-400">error</span>
-                    {% endif %}
-                </div>
-                <div class="ml-3 flex-1">
-                    <p class="text-sm font-medium">{{ message }}</p>
-                </div>
-                <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 focus:outline-none">
-                    <span class="material-symbols-outlined text-sm">close</span>
-                </button>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <style>
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
+        // Mobile Nav Drawer Toggle
+        const mobileToggle = document.getElementById('mobileNavToggle');
+        const mobileDrawer = document.getElementById('mobileNavDrawer');
+        if (mobileToggle && mobileDrawer) {
+            mobileToggle.addEventListener('click', () => {
+                mobileDrawer.classList.toggle('hidden');
+            });
         }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    .animate-slide-in {
-        animation: slideIn 0.3s ease-out forwards;
-    }
-    </style>
-
-    <script>
-    // Auto-hide messages after 5 seconds
-    document.addEventListener('DOMContentLoaded', function() {
-        const messages = document.querySelectorAll('.animate-slide-in > div');
-        messages.forEach(message => {
-            setTimeout(() => {
-                message.style.transition = 'all 0.3s ease-out';
-                message.style.transform = 'translateX(100%)';
-                message.style.opacity = '0';
-                setTimeout(() => message.remove(), 300);
-            }, 5000);
-        });
-    });
     </script>
 
-    {% block content %}
-    {% endblock %}
-
-    <script>
-        // Theme toggle functionality
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.theme = 'light';
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.theme = 'dark';
-            }
-        });
-    </script>
-
-    <!-- Google Translate Widget and Language Switcher -->
+    <!-- Google Translate Script (Controlled & Isolated) -->
     <script type="text/javascript">
-        // Prevent Google Translate banner from appearing
         window.gtranslateConfig = {
             default_language: 'en',
             languages: ['en', 'hi', 'kn'],
@@ -290,38 +517,28 @@
 
         function googleTranslateElementInit() {
             try {
-                new google.translate.TranslateElement(
-                    {
-                        pageLanguage: 'en', 
-                        includedLanguages: 'en,hi,kn', 
-                        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                        autoDisplay: false,
-                        gaTrack: false,
-                        gaId: ''
-                    },
-                    'google_translate_element'
-                );
+                new google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,hi,kn',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false
+                }, 'google_translate_element');
             } catch(e) {
-                console.log('Google Translate error:', e);
+                console.log('Translate init info:', e);
             }
         }
 
         function setLanguageCookie(lang) {
-            // Store in both cookie and localStorage
             document.cookie = 'googtrans=/en/' + lang + '; path=/; max-age=31536000';
             localStorage.setItem('selectedLang', lang);
         }
 
         function triggerTranslation(lang) {
             setLanguageCookie(lang);
-            
-            // Trigger the translation
             if (lang === 'en') {
-                // Reset to English
                 document.cookie = 'googtrans=/en/en; path=/';
                 window.location.reload();
             } else {
-                // Find and trigger the Google Translate combo
                 setTimeout(() => {
                     const combo = document.querySelector('.goog-te-combo');
                     if (combo) {
@@ -329,11 +546,9 @@
                         combo.dispatchEvent(new Event('change'));
                     }
                 }, 100);
-                
-                // Fallback: reload after a short delay
                 setTimeout(() => {
                     window.location.reload();
-                }, 500);
+                }, 400);
             }
         }
 
@@ -341,49 +556,14 @@
             const selector = document.getElementById('languageSelector');
             if (selector) {
                 selector.addEventListener('change', function() {
-                    const lang = this.value;
-                    triggerTranslation(lang);
+                    triggerTranslation(this.value);
                 });
-
-                // Set initial value from localStorage or cookie
                 const storedLang = localStorage.getItem('selectedLang') || 'en';
                 selector.value = storedLang;
             }
-
-            // Hide Google Translate elements after they load
-            setTimeout(() => {
-                const banner = document.querySelector('.goog-te-banner-frame');
-                if (banner) {
-                    banner.style.display = 'none';
-                }
-                
-                const gadget = document.querySelector('.goog-te-gadget');
-                if (gadget) {
-                    gadget.style.display = 'none';
-                }
-                
-                // Remove any extra margins/padding that Google Translate adds
-                document.body.style.marginTop = '0';
-                document.body.style.paddingTop = '0';
-            }, 500);
-        });
-
-        // Clean up on page load to prevent overlay
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                document.body.style.top = '0 !important';
-                document.documentElement.style.top = '0 !important';
-                
-                // Hide all Google Translate elements
-                const elements = document.querySelectorAll('[class*="goog-te"]');
-                elements.forEach(el => {
-                    if (el.id !== 'google_translate_element') {
-                        el.style.display = 'none';
-                    }
-                });
-            }, 100);
         });
     </script>
     <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

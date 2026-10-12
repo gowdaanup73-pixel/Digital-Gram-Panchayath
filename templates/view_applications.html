@@ -1,176 +1,157 @@
 {% extends 'base.html' %}
+{% block title %}Application Review Registry · Digital Gram Panchayat{% endblock %}
+
 {% block content %}
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <header class="sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-sm">
-        <div class="flex items-center justify-between p-4">
-            <h1 class="text-xl font-bold text-gray-900 dark:text-white">All Applications</h1>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    
+    <!-- Top Administrative Metadata Header -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-stone border-b border-[#D8CDBB] dark:border-[#37372F] pb-2">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 bg-rust"></span>
+            <span class="uppercase tracking-widest text-ink dark:text-paper font-semibold">APPLICATION REVIEW REGISTRY</span>
+            <span class="text-stone">/</span>
+            <span class="uppercase">SCHEME ADJUDICATION DESK</span>
         </div>
-    </header>
+        <div class="flex items-center gap-3">
+            <span>TOTAL SUBMISSIONS: {{ applications|length }}</span>
+            <span class="hidden sm:inline">·</span>
+            <span>STATUTORY AUDIT ENFORCED</span>
+        </div>
+    </div>
 
-    <main class="p-4">
-        <div class="max-w-7xl mx-auto">
-            {% if messages %}
-            {% for message in messages %}
-            <div class="mb-4 bg-green-50 dark:bg-green-900/50 text-green-600 dark:text-green-400 p-4 rounded-lg flex items-center">
-                <span class="material-symbols-outlined mr-2">check_circle</span>
-                <p>{{ message }}</p>
+    <!-- Container -->
+    <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-6 shadow-card">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D8CDBB] dark:border-[#3E3E34] mb-6">
+            <div>
+                <h1 class="font-serif text-xl sm:text-2xl font-bold text-ink dark:text-paper">
+                    Public Scheme Applications
+                </h1>
+                <p class="text-xs text-charcoal dark:text-stone mt-0.5">
+                    Adjudicate submitted citizen requests for welfare programs, infrastructure support, and grant quotas.
+                </p>
             </div>
-            {% endfor %}
-            {% endif %}
+            <div class="flex items-center gap-2">
+                <a href="{% url 'officer_dashboard' %}" class="px-3 py-1.5 bg-paper dark:bg-[#20201B] hover:bg-khadi text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone border border-[#D8CDBB] dark:border-[#3E3E34] transition-colors flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm notranslate" translate="no">arrow_back</span>
+                    <span>Officer Desk</span>
+                </a>
+            </div>
+        </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Service</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Full Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aadhar Number</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Address</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Submitted At</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                            {% for app in applications %}
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                    <a href="{% url 'view_profile' username=app.user.username %}" class="text-blue-600 dark:text-blue-400 hover:underline">
-                                        {{ app.user.username }}
-                                    </a>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ app.service.name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ app.full_name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ app.aadhar_number }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ app.address }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        {% if app.status == 'Pending' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-400
-                                        {% elif app.status == 'Approved' %}bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400
-                                        {% elif app.status == 'Rejected' %}bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-400{% endif %}">
-                                        <span class="material-symbols-outlined text-sm mr-1">
-                                            {% if app.status == 'Pending' %}schedule
-                                            {% elif app.status == 'Approved' %}check_circle
-                                            {% elif app.status == 'Rejected' %}cancel{% endif %}
+        <!-- Table -->
+        <div class="overflow-x-auto border border-[#D8CDBB] dark:border-[#3E3E34]">
+            <table class="min-w-full divide-y divide-[#D8CDBB] dark:divide-[#3E3E34] text-xs">
+                <thead class="bg-khadi dark:bg-[#1E1E19] text-stone font-mono uppercase tracking-wider text-[11px]">
+                    <tr>
+                        <th class="px-4 py-2.5 text-left">Citizen Profile</th>
+                        <th class="px-4 py-2.5 text-left">Scheme Requested</th>
+                        <th class="px-4 py-2.5 text-left">Applicant Name</th>
+                        <th class="px-4 py-2.5 text-left">Aadhar ID</th>
+                        <th class="px-4 py-2.5 text-left">Village Address</th>
+                        <th class="px-4 py-2.5 text-left">Status</th>
+                        <th class="px-4 py-2.5 text-left">Lodged Date</th>
+                        <th class="px-4 py-2.5 text-left">Official Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#D8CDBB] dark:divide-[#3E3E34] bg-paper dark:bg-[#25251F]">
+                    {% for app in applications %}
+                    <tr class="hover:bg-khadi/30 transition-colors">
+                        <td class="px-4 py-3 font-mono font-bold">
+                            <a href="{% url 'view_profile' username=app.user.username %}" class="text-rust hover:underline">
+                                {{ app.user.username }}
+                            </a>
+                        </td>
+                        <td class="px-4 py-3 font-medium text-ink dark:text-paper">{{ app.service.name }}</td>
+                        <td class="px-4 py-3 text-charcoal dark:text-stone">{{ app.full_name }}</td>
+                        <td class="px-4 py-3 font-mono text-stone">{{ app.aadhar_number }}</td>
+                        <td class="px-4 py-3 text-charcoal dark:text-stone max-w-xs truncate" title="{{ app.address }}">{{ app.address }}</td>
+                        <td class="px-4 py-3">
+                            <span class="inline-block px-2 py-0.5 text-[10px] font-mono uppercase font-bold tracking-wider border
+                                {% if app.status == 'Pending' %}border-civic-amber text-civic-amber bg-amber-50 dark:bg-amber-950/20
+                                {% elif app.status == 'Approved' %}border-civic-green text-civic-green bg-green-50 dark:bg-green-950/20
+                                {% elif app.status == 'Rejected' %}border-civic-red text-civic-red bg-red-50 dark:bg-red-950/20
+                                {% else %}border-stone text-stone{% endif %}">
+                                {{ app.status }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 font-mono text-stone whitespace-nowrap">{{ app.submitted_at|date:"d M Y" }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            {% if app.status == 'Pending' %}
+                            <div class="flex items-center gap-1.5">
+                                <form method="post" class="inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="app_id" value="{{ app.id }}">
+                                    <button type="submit" name="action" value="accept"
+                                        class="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider bg-civic-green/10 text-civic-green border border-civic-green hover:bg-civic-green hover:text-white transition-colors">
+                                        Accept
+                                    </button>
+                                </form>
+                                <button type="button" onclick="openRejectModal('{{ app.id }}')"
+                                    class="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider bg-civic-red/10 text-civic-red border border-civic-red hover:bg-civic-red hover:text-white transition-colors">
+                                    Reject
+                                </button>
+                            </div>
+
+                            <!-- Rejection Modal -->
+                            <div id="rejectModal_{{ app.id }}" class="fixed inset-0 z-50 hidden bg-ink/60 backdrop-blur-xs flex items-center justify-center p-4">
+                                <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-6 shadow-card-lg w-full max-w-md">
+                                    <div class="mb-4 pb-2 border-b border-[#D8CDBB] dark:border-[#3E3E34]">
+                                        <span class="text-[10px] font-mono uppercase tracking-widest text-civic-red font-bold block">
+                                            [ REJECTION ADJUDICATION NOTICE ]
                                         </span>
-                                        {{ app.status }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ app.submitted_at|date:"M d, Y, g:i a" }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    {% if app.status == 'Pending' %}
-                                    <form method="post" class="flex gap-2">
+                                        <h3 class="font-serif text-lg font-bold text-ink dark:text-paper">
+                                            Reject Application #{{ app.id }}
+                                        </h3>
+                                    </div>
+                                    <form method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="app_id" value="{{ app.id }}">
-                                        <button type="submit" name="action" value="accept" 
-                                            class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded 
-                                            bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-900/50 dark:text-green-400 
-                                            dark:hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                            <span class="material-symbols-outlined text-sm mr-1">check_circle</span>
-                                            Accept
-                                        </button>
-                                        <button type="button"
-                                            onclick="openRejectModal('{{ app.id }}')"
-                                            class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded 
-                                            bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-900/50 dark:text-red-400 
-                                            dark:hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                            <span class="material-symbols-outlined text-sm mr-1">cancel</span>
-                                            Reject
-                                        </button>
-                                    </form>
-                                    
-                                    <!-- Rejection Modal -->
-                                    <div id="rejectModal_{{ app.id }}" class="fixed inset-0 z-50 hidden">
-                                        <div class="absolute inset-0 bg-black/50"></div>
-                                        <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-96">
-                                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                                                    Reject Application
-                                                </h3>
-                                                <form method="post">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="app_id" value="{{ app.id }}">
-                                                    <input type="hidden" name="action" value="reject">
-                                                    <div class="mb-4">
-                                                        <label for="rejection_reason_{{ app.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                            Rejection Reason (Required)
-                                                        </label>
-                                                        <textarea
-                                                            id="rejection_reason_{{ app.id }}"
-                                                            name="rejection_reason"
-                                                            rows="3"
-                                                            class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary dark:bg-gray-700 dark:text-white"
-                                                            required
-                                                        ></textarea>
-                                                    </div>
-                                                    <div class="flex justify-end gap-3">
-                                                        <button type="button"
-                                                            onclick="closeRejectModal('{{ app.id }}')"
-                                                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                                                            Cancel
-                                                        </button>
-                                                        <button type="submit"
-                                                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                                            Reject Application
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
+                                        <input type="hidden" name="action" value="reject">
+                                        <div class="mb-4">
+                                            <label for="rejection_reason_{{ app.id }}" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                                                Statutory Reason for Rejection <span class="text-rust">*</span>
+                                            </label>
+                                            <textarea id="rejection_reason_{{ app.id }}" name="rejection_reason" rows="3" required
+                                                class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2 text-xs border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust"
+                                                placeholder="State specific deficiency or eligibility mismatch..."></textarea>
                                         </div>
-                                    </div>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="8" class="px-6 py-12 text-center">
-                                    <span class="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600">folder_open</span>
-                                    <p class="mt-4 text-gray-600 dark:text-gray-400">No applications found.</p>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                        <div class="flex justify-end gap-2 pt-2 border-t border-[#D8CDBB] dark:border-[#3E3E34]">
+                                            <button type="button" onclick="closeRejectModal('{{ app.id }}')"
+                                                class="px-3 py-1.5 border border-[#D8CDBB] text-xs font-semibold uppercase text-stone hover:text-ink">
+                                                Cancel
+                                            </button>
+                                            <button type="submit"
+                                                class="px-4 py-1.5 bg-civic-red hover:bg-red-800 text-white text-xs font-semibold uppercase tracking-wider border border-civic-red">
+                                                Confirm Rejection
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            {% else %}
+                            <span class="text-stone font-mono text-[11px]">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="px-6 py-12 text-center text-stone font-mono uppercase text-xs">
+                            No citizen applications currently on record
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </main>
-
-    <!-- JavaScript for Modal -->
-    <script>
-        function openRejectModal(appId) {
-            document.getElementById(`rejectModal_${appId}`).classList.remove('hidden');
-        }
-
-        function closeRejectModal(appId) {
-            document.getElementById(`rejectModal_${appId}`).classList.add('hidden');
-        }
-
-        // Close modal when clicking outside
-        window.addEventListener('click', function(event) {
-            if (event.target.classList.contains('fixed') && event.target.contains(document.querySelector('.transform'))) {
-                event.target.classList.add('hidden');
-            }
-        });
-    </script>
-
-    <footer class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-        <nav class="flex justify-around py-3">
-            <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="{% url 'manage_services' %}">
-                <span class="material-symbols-outlined">category</span>
-                <span class="text-xs">Services</span>
-            </a>
-            <a class="flex flex-col items-center gap-1 text-primary" href="{% url 'view_applications' %}">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">description</span>
-                <span class="text-xs">Applications</span>
-            </a>
-            <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="{% url 'officer_dashboard' %}">
-                <span class="material-symbols-outlined">dashboard</span>
-                <span class="text-xs">Dashboard</span>
-            </a>
-        </nav>
-    </footer>
+    </div>
 </div>
+
+<script>
+function openRejectModal(appId) {
+    document.getElementById(`rejectModal_${appId}`).classList.remove('hidden');
+}
+function closeRejectModal(appId) {
+    document.getElementById(`rejectModal_${appId}`).classList.add('hidden');
+}
+</script>
 {% endblock %}

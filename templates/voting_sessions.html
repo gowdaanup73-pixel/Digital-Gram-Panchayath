@@ -1,125 +1,125 @@
 {% extends 'base.html' %}
+{% block title %}Civic Elections & Voting · Digital Gram Panchayat{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="mb-8 flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Voting Sessions</h1>
-            {% if user.is_staff %}
-            <a href="{% url 'manage_voting_sessions' %}" 
-                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                <span class="material-symbols-outlined mr-2">settings</span>
-                Manage Sessions
-            </a>
-            {% endif %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    
+    <!-- Top Administrative Metadata Header -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-stone border-b border-[#D8CDBB] dark:border-[#37372F] pb-2">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 bg-rust"></span>
+            <span class="uppercase tracking-widest text-ink dark:text-paper font-semibold">GRAM SABHA DEMOCRATIC COUNCIL</span>
+            <span class="text-stone">/</span>
+            <span class="uppercase">WARD ELECTIONS REGISTRY</span>
+        </div>
+        {% if user.is_staff %}
+        <a href="{% url 'manage_voting_sessions' %}" class="text-rust hover:underline flex items-center gap-1 font-semibold uppercase text-xs">
+            <span class="material-symbols-outlined text-xs notranslate" translate="no">settings</span>
+            <span>Election Officer Desk</span>
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Active Voting Sessions Section -->
+    <div class="mb-10">
+        <div class="flex items-center gap-2.5 mb-4 pb-2 border-b border-[#D8CDBB] dark:border-[#3E3E34]">
+            <span class="w-2 h-2 bg-rust"></span>
+            <h2 class="font-serif text-xl font-bold text-ink dark:text-paper">
+                Active Ward Voting Sessions
+            </h2>
         </div>
 
-        <!-- Active Voting Sessions -->
-        <div class="mb-8">
-            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
-                <span class="material-symbols-outlined mr-2 text-primary">how_to_vote</span>
-                Active Sessions
-            </h2>
-            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {% for session in active_sessions %}
-                <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ session.title }}</h3>
-                            {% if session.id in voted_sessions %}
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400">
-                                <span class="material-symbols-outlined text-sm mr-1">check_circle</span>
-                                Voted
-                            </span>
-                            {% endif %}
-                        </div>
-                        
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ session.description }}</p>
-                        
-                        <div class="space-y-2 mb-6">
-                            <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                                <span class="material-symbols-outlined text-primary mr-2">work</span>
-                                <span class="font-medium">Position:</span> 
-                                <span class="ml-1">{{ session.position.name }}</span>
-                            </p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                                <span class="material-symbols-outlined text-primary mr-2">schedule</span>
-                                <span class="font-medium">Ends:</span>
-                                <span class="ml-1">{{ session.end_date|date:"F j, Y, g:i a" }}</span>
-                            </p>
-                        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {% for session in active_sessions %}
+            <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-6 shadow-card flex flex-col justify-between hover:border-rust transition-colors">
+                <div>
+                    <div class="flex items-start justify-between gap-2 mb-3 pb-2 border-b border-[#D8CDBB]/60 dark:border-[#3E3E34]">
+                        <span class="font-mono text-[10px] text-rust font-bold uppercase">SESSION #{{ session.id|stringformat:"03d" }}</span>
+                        {% if session.id in voted_sessions %}
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono uppercase font-bold border border-civic-green/40 text-civic-green bg-green-50/50 dark:bg-green-950/20">
+                            <span class="material-symbols-outlined text-xs notranslate" translate="no">verified</span>
+                            <span>Ballot Cast</span>
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center px-2 py-0.5 text-[10px] font-mono uppercase font-bold border border-civic-amber/40 text-civic-amber bg-amber-50/50 dark:bg-amber-950/20">
+                            Polls Open
+                        </span>
+                        {% endif %}
+                    </div>
 
-                        <div class="flex space-x-4">
-                            {% if session.id in voted_sessions %}
-                            <button disabled class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-md cursor-not-allowed dark:bg-gray-700 dark:text-gray-500">
-                                <span class="material-symbols-outlined mr-2">how_to_vote</span>
-                                Already Voted
-                            </button>
-                            {% else %}
-                            <a href="{% url 'vote' session.id %}" 
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-md shadow-sm transition-colors">
-                                <span class="material-symbols-outlined mr-2">how_to_vote</span>
-                                Cast Vote
-                            </a>
-                            {% endif %}
-                            
-                            <a href="{% url 'apply_candidacy' session.id %}" 
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-md transition-colors">
-                                <span class="material-symbols-outlined mr-2">person_add</span>
-                                Apply as Candidate
-                            </a>
+                    <h3 class="font-serif text-base font-bold text-ink dark:text-paper mb-1">
+                        {{ session.title }}
+                    </h3>
+                    <p class="text-xs text-charcoal dark:text-stone leading-relaxed mb-4">
+                        {{ session.description }}
+                    </p>
+
+                    <div class="space-y-1.5 text-xs text-charcoal dark:text-stone font-mono text-[11px] mb-4">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-stone">POSITION:</span>
+                            <span class="font-bold text-ink dark:text-paper">{{ session.position.name }}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-stone">CLOSES:</span>
+                            <span>{{ session.end_date|date:"d M Y, H:i" }} IST</span>
                         </div>
                     </div>
                 </div>
-                {% empty %}
-                <div class="col-span-full text-center py-12">
-                    <span class="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600">how_to_vote</span>
-                    <p class="mt-4 text-gray-600 dark:text-gray-400">No active voting sessions at the moment.</p>
+
+                <div class="pt-4 border-t border-[#D8CDBB] dark:border-[#3E3E34] flex flex-wrap gap-2">
+                    {% if session.id in voted_sessions %}
+                    <button disabled class="px-3 py-1.5 bg-khadi dark:bg-charcoal text-stone text-xs font-mono uppercase border border-[#D8CDBB] dark:border-[#3E3E34] cursor-not-allowed">
+                        Voted
+                    </button>
+                    {% else %}
+                    <a href="{% url 'vote' session.id %}"
+                        class="px-3.5 py-1.5 bg-rust hover:bg-rust-dark text-paper text-xs font-semibold uppercase tracking-wider border border-rust transition-colors shadow-sm inline-flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs notranslate" translate="no">how_to_vote</span>
+                        <span>Cast Ballot</span>
+                    </a>
+                    {% endif %}
+                    
+                    <a href="{% url 'apply_candidacy' session.id %}"
+                        class="px-3 py-1.5 bg-paper dark:bg-[#20201B] hover:bg-khadi text-ink dark:text-paper text-xs font-semibold uppercase tracking-wider border border-[#D8CDBB] dark:border-[#3E3E34] transition-colors inline-flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs notranslate" translate="no">person_add</span>
+                        <span>Apply Candidacy</span>
+                    </a>
                 </div>
-                {% endfor %}
             </div>
+            {% empty %}
+            <div class="col-span-full bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-10 text-center shadow-card">
+                <span class="material-symbols-outlined text-3xl text-stone notranslate mb-1" translate="no">how_to_vote</span>
+                <p class="text-xs font-mono uppercase tracking-wider text-stone">No active election sessions scheduled</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Upcoming Sessions Section -->
+    <div>
+        <div class="flex items-center gap-2.5 mb-4 pb-2 border-b border-[#D8CDBB] dark:border-[#3E3E34]">
+            <span class="w-2 h-2 bg-stone"></span>
+            <h2 class="font-serif text-lg font-bold text-ink dark:text-paper">
+                Upcoming Gram Sabha Sessions
+            </h2>
         </div>
 
-        <!-- Upcoming Voting Sessions -->
-        <div>
-            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
-                <span class="material-symbols-outlined mr-2 text-primary">event_upcoming</span>
-                Upcoming Sessions
-            </h2>
-            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {% for session in upcoming_sessions %}
-                <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
-                    <div class="p-6">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ session.title }}</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ session.description }}</p>
-                        
-                        <div class="space-y-2 mb-6">
-                            <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                                <span class="material-symbols-outlined text-primary mr-2">work</span>
-                                <span class="font-medium">Position:</span>
-                                <span class="ml-1">{{ session.position.name }}</span>
-                            </p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                                <span class="material-symbols-outlined text-primary mr-2">event</span>
-                                <span class="font-medium">Starts:</span>
-                                <span class="ml-1">{{ session.start_date|date:"F j, Y, g:i a" }}</span>
-                            </p>
-                        </div>
-
-                        <a href="{% url 'apply_candidacy' session.id %}" 
-                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-md transition-colors">
-                            <span class="material-symbols-outlined mr-2">person_add</span>
-                            Apply as Candidate
-                        </a>
-                    </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {% for session in upcoming_sessions %}
+            <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-5 shadow-card">
+                <span class="font-mono text-[10px] text-stone uppercase block mb-1">SCHEDULED NOTIFICATION</span>
+                <h3 class="font-serif text-base font-bold text-ink dark:text-paper mb-1">{{ session.title }}</h3>
+                <p class="text-xs text-charcoal dark:text-stone mb-3">{{ session.description }}</p>
+                <div class="text-[11px] font-mono text-stone space-y-1">
+                    <p>POSITION: {{ session.position.name }}</p>
+                    <p>START DATE: {{ session.start_date|date:"d M Y, H:i" }} IST</p>
                 </div>
-                {% empty %}
-                <div class="col-span-full text-center py-12">
-                    <span class="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600">event_upcoming</span>
-                    <p class="mt-4 text-gray-600 dark:text-gray-400">No upcoming voting sessions at the moment.</p>
-                </div>
-                {% endfor %}
             </div>
+            {% empty %}
+            <div class="col-span-full py-4 text-xs font-mono text-stone uppercase">
+                No future sessions published on civic calendar.
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>

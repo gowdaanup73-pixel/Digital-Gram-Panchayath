@@ -1,34 +1,93 @@
 {% extends 'base.html' %}
+
+{% block title %}National Bio-Energy Program Application · Digital Gram Panchayath{% endblock %}
+
 {% block content %}
-<section class="container mt-5">
-    <h2 class="text-center mb-4">Bio Gas Plant Application</h2>
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="min-h-screen bg-khadi-texture py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto space-y-6">
+
+        <!-- Breadcrumb / Header -->
+        <div class="border-b border-fine pb-4">
+            <div class="flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-stone-dark mb-1">
+                <a href="{% url 'services' %}" class="hover:text-rust transition flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm notranslate">arrow_back</span>
+                    <span>Statutory Schemes</span>
+                </a>
+                <span>/</span>
+                <span class="text-rust font-semibold">Form No. GP-BG-02</span>
+            </div>
+            <h1 class="font-serif text-2xl sm:text-3xl font-bold text-ink tracking-tight">
+                Family-Type Biogas Plant Subsidy
+            </h1>
+            <p class="text-xs sm:text-sm text-stone-dark mt-1">
+                Application for construction subsidy under the National Bio-Energy & Rural Sanitation Programme.
+            </p>
+        </div>
+
+        {% if messages %}
+        <div class="space-y-2">
+            {% for message in messages %}
+            <div class="p-4 bg-paper border-l-4 {% if message.tags == 'error' %}border-red-700 text-red-900{% else %}border-rust text-ink{% endif %} border-y border-r border-fine shadow-sm text-sm flex items-start gap-3">
+                <span class="material-symbols-outlined text-rust shrink-0 notranslate">info</span>
+                <div>{{ message }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Form Card -->
+        <div class="bg-paper border border-fine shadow-sm p-6 sm:p-8 relative">
+            <div class="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-fine pointer-events-none"></div>
+
+            <form method="POST" enctype="multipart/form-data" class="space-y-5">
+                {% csrf_token %}
+
+                <div>
+                    <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">Applicant Legal Name</label>
+                    <input type="text" name="full_name" required
+                           placeholder="Enter applicant's full name as per Aadhaar"
+                           class="w-full px-3 py-2.5 bg-paper border border-fine text-ink text-sm rounded focus:outline-none focus:border-rust focus:ring-1 focus:ring-rust transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">Aadhaar Identification Number (12 Digits)</label>
+                    <input type="text" name="aadhar_number" required pattern="[0-9]{12}" maxlength="12"
+                           placeholder="12-digit UID number"
+                           class="w-full px-3 py-2.5 bg-paper border border-fine text-ink text-sm font-mono rounded focus:outline-none focus:border-rust focus:ring-1 focus:ring-rust transition">
+                    <p class="text-[11px] text-stone-dark mt-1 font-mono">Verified against Gram Panchayat household list.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">Agricultural Holding & Farmstead Address</label>
+                    <textarea name="address" rows="3" required
+                              placeholder="House No, Ward, Village, Land Survey No., Cattle details"
+                              class="w-full px-3 py-2.5 bg-paper border border-fine text-ink text-sm rounded focus:outline-none focus:border-rust focus:ring-1 focus:ring-rust transition"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">Supporting Records (RTC/Pahani, Bank Passbook)</label>
+                    <div class="p-4 bg-surface border border-fine border-dashed rounded text-center">
+                        <span class="material-symbols-outlined text-2xl text-stone-dark mb-1 notranslate">upload_file</span>
+                        <input type="file" name="documents" multiple
+                               class="block w-full text-xs text-stone-dark file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-rust file:text-paper hover:file:bg-rust-dark cursor-pointer">
+                        <p class="text-[11px] text-stone-dark mt-1">Accepts PDF, JPG, PNG up to 5MB each.</p>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-fine flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <a href="{% url 'services' %}" 
+                       class="w-full sm:w-auto px-5 py-2.5 bg-surface hover:bg-khadi-dark border border-fine text-ink font-medium text-xs uppercase tracking-wider rounded transition text-center">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="w-full sm:w-auto px-6 py-2.5 bg-rust hover:bg-rust-dark text-paper font-semibold text-xs uppercase tracking-wider rounded shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm notranslate">send</span>
+                        <span>Submit Scheme Application</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
     </div>
-    {% endfor %}
-    {% endif %}
-    <form class="mx-auto" style="max-width:600px;" method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label class="form-label">Full Name</label>
-            <input type="text" name="full_name" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Aadhar Number</label>
-            <input type="text" name="aadhar_number" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Address</label>
-            <textarea name="address" class="form-control" rows="3" required></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Upload Documents</label>
-            <input type="file" class="form-control" multiple>
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Submit Application</button>
-    </form>
-</section>
+</div>
 {% endblock %}
