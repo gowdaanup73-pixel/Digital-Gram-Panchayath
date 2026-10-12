@@ -2,6 +2,12 @@
   <h1>🏛️ Digital Gram Panchayath (Secure Enterprise Edition)</h1>
   <p>A Production-Grade, Hardened E-Governance & Grievance Redressal Portal for Local Administrations.</p>
 
+  <p>
+    <a href="https://digital-grampanchayath.vercel.app/">
+      <img src="https://img.shields.io/badge/Live%20Deployment-digital--grampanchayath.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Deployment on Vercel" />
+    </a>
+  </p>
+
   [![Django](https://img.shields.io/badge/Django-5.2%20%7C%206.1-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
   [![Django REST Framework](https://img.shields.io/badge/DRF-3.16+-red?style=for-the-badge&logo=django)](https://www.django-rest-framework.org/)
   [![JWT Authentication](https://img.shields.io/badge/Auth-SimpleJWT-orange?style=for-the-badge&logo=json-web-tokens)](https://django-rest-framework-simplejwt.readthedocs.io/)
@@ -32,7 +38,6 @@
 9. [Automated Test Suite & Verification](#-automated-test-suite--verification)
 10. [Secret Management & GitGuardian Compliance](#-secret-management--gitguardian-compliance)
 11. [Deployment & Production Checklist](#-deployment--production-checklist)
-12. [License](#-license)
 
 ---
 
@@ -255,7 +260,15 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 6. Run Local Development Server
+### 6. Application Access & Live Deployment
+
+#### 🌐 Live Production Deployment
+- **Live Portal**: [https://digital-grampanchayath.vercel.app/](https://digital-grampanchayath.vercel.app/)
+- **Citizen Portal**: [https://digital-grampanchayath.vercel.app/login/](https://digital-grampanchayath.vercel.app/login/)
+- **Officer Portal**: [https://digital-grampanchayath.vercel.app/officer-login/](https://digital-grampanchayath.vercel.app/officer-login/)
+- **REST API Root**: [https://digital-grampanchayath.vercel.app/api/v1/](https://digital-grampanchayath.vercel.app/api/v1/)
+
+#### 💻 Local Development Server
 ```bash
 python manage.py runserver
 ```
@@ -311,8 +324,3 @@ System check identified no issues (0 silenced).
 4. [ ] **Static Assets**: Execute `python manage.py collectstatic --no-input`.
 5. [ ] **HTTPS / Proxy**: Ensure reverse proxy terminates TLS and forwards `HTTP_X_FORWARDED_PROTO=https`.
 6. [ ] **Email Gateway**: Configure SMTP credentials (`EMAIL_HOST`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`) for password reset delivery.
-
----
-
-## 📄 License
-This project is licensed under the MIT License.
