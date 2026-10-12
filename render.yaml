@@ -1,4 +1,4 @@
-﻿services:
+services:
   - type: web
     name: digital-gram-panchayat
     runtime: python
@@ -10,6 +10,6 @@
       - key: DEBUG
         value: "False"
       - key: DATABASE_URL
-        value: "postgresql://neondb_owner:npg_YDs0WMEtfBo9@ep-dawn-grass-aydi57us.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require"
+        sync: false
       - key: PYTHON_VERSION
         value: "3.11.0"
