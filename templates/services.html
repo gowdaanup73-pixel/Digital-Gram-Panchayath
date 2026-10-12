@@ -1,75 +1,120 @@
 {% extends 'base.html' %}
+{% block title %}Public Schemes Directory · Digital Gram Panchayat{% endblock %}
+
 {% block content %}
-<div class="relative flex h-auto min-h-screen w-full flex-col justify-between overflow-x-hidden">
-<div class="flex-grow">
-<div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
-<form method="GET" action="{% url 'services' %}" class="relative">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">search</span>
-<input name="q" value="{{ search_query }}"
-    class="w-full rounded-full border-none bg-gray-100 dark:bg-gray-700 py-3 pl-10 pr-4 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-    placeholder="Search for services" type="text"/>
-</form>
-</div>
-<main class="p-4">
-<h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">All Services</h2>
-<div class="grid grid-cols-1 gap-3">
-    {% if search_query and not services %}
-    <div class="text-center py-8">
-        <span class="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600">search_off</span>
-        <p class="mt-4 text-gray-600 dark:text-gray-400">No services found matching "{{ search_query }}"</p>
-        <a href="{% url 'services' %}" class="mt-4 inline-flex items-center gap-2 text-primary hover:text-primary/90">
-            <span class="material-symbols-outlined">arrow_back</span>
-            View all services
-        </a>
-    </div>
-    {% else %}
-        {% for service in services %}
-        <a class="group flex items-start gap-4 rounded-lg bg-white dark:bg-gray-800 p-4 shadow-sm transition-all hover:bg-gray-50 dark:hover:bg-gray-700" href="{% url 'apply_service' service.id %}">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary/20">
-                <span class="material-symbols-outlined">{% if 'Road' in service.name %}construction
-                    {% elif 'Bio' in service.name %}eco
-                    {% elif 'Skill' in service.name %}engineering
-                    {% else %}description{% endif %}</span>
-            </div>
-            <div class="flex-grow">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-primary">{{ service.name }}</h3>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                        {{ service.max_applications }} slots
-                    </span>
-                </div>
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ service.description }}</p>
-                <div class="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400">
-                    <span class="material-symbols-outlined text-sm mr-1">schedule</span>
-                    Added {{ service.created_at|timesince }} ago
-                </div>
-            </div>
-        </a>
-        {% empty %}
-        <div class="text-center py-8">
-            <span class="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600">category</span>
-            <p class="mt-4 text-gray-600 dark:text-gray-400">No services available yet.</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    
+    <!-- Top Administrative Metadata Header -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-stone border-b border-[#D8CDBB] dark:border-[#37372F] pb-2">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 bg-rust"></span>
+            <span class="uppercase tracking-widest text-ink dark:text-paper font-semibold">PUBLIC WELFARE SCHEMES DIRECTORY</span>
+            <span class="text-stone">/</span>
+            <span class="uppercase">CIVIC CATALOG</span>
         </div>
-        {% endfor %}
-    {% endif %}
-</div>
-</main>
-</div>
-<footer class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-<nav class="flex justify-around py-3">
-    <a class="flex flex-col items-center gap-1 text-primary" href="{% url 'services' %}">
-        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">list_alt</span>
-        <span class="text-xs">Services</span>
-    </a>
-    <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="{% url 'user_dashboard' %}">
-        <span class="material-symbols-outlined">dashboard</span>
-        <span class="text-xs">Dashboard</span>
-    </a>
-    <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="{% url 'profile' %}">
-        <span class="material-symbols-outlined">person</span>
-        <span class="text-xs">Profile</span>
-    </a>
-</nav>
-</footer>
+        <div class="flex items-center gap-3">
+            <span>TOTAL SCHEMES: {{ services|length }}</span>
+            <span class="hidden sm:inline">·</span>
+            <span>DIRECT BENEFIT ALLOCATION</span>
+        </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-4 sm:p-6 shadow-card mb-8">
+        <form method="GET" action="{% url 'services' %}" class="flex flex-col sm:flex-row gap-3 items-center">
+            <div class="relative flex-grow w-full">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone">
+                    <span class="material-symbols-outlined text-base notranslate" translate="no">search</span>
+                </div>
+                <input name="q" value="{{ search_query }}"
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust transition-colors placeholder:text-stone"
+                    placeholder="Search by scheme title, category, or agricultural program..." type="text"/>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button type="submit"
+                    class="w-full sm:w-auto px-5 py-2.5 bg-rust hover:bg-rust-dark text-paper text-xs font-semibold uppercase tracking-wider border border-rust transition-colors shadow-sm flex items-center justify-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm notranslate" translate="no">search</span>
+                    <span>Search Catalog</span>
+                </button>
+                {% if search_query %}
+                <a href="{% url 'services' %}"
+                    class="px-3 py-2.5 text-xs font-semibold uppercase text-stone hover:text-ink dark:hover:text-paper border border-[#D8CDBB] dark:border-[#3E3E34] transition-colors">
+                    Reset
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Scheme Listing Grid -->
+    <div class="space-y-4">
+        {% if search_query and not services %}
+        <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-12 text-center shadow-card">
+            <span class="material-symbols-outlined text-4xl text-stone notranslate mb-2" translate="no">search_off</span>
+            <h3 class="font-serif text-lg font-bold text-ink dark:text-paper mb-1">No Matching Civic Programs</h3>
+            <p class="text-xs text-charcoal dark:text-stone mb-4">No services matched query "{{ search_query }}".</p>
+            <a href="{% url 'services' %}" class="inline-flex items-center gap-1 text-xs font-semibold uppercase text-rust hover:underline">
+                <span class="material-symbols-outlined text-sm notranslate" translate="no">arrow_back</span>
+                <span>View Full Civic Catalog</span>
+            </a>
+        </div>
+        {% else %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for service in services %}
+            <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-5 sm:p-6 shadow-card flex flex-col justify-between hover:border-rust transition-colors group">
+                <div>
+                    <!-- Card Top Header -->
+                    <div class="flex items-start justify-between gap-3 mb-3 pb-3 border-b border-[#D8CDBB]/70 dark:border-[#3E3E34]">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 bg-khadi dark:bg-[#1E1E19] border border-[#D8CDBB] dark:border-[#3E3E34] flex items-center justify-center text-rust flex-shrink-0 group-hover:border-rust transition-colors">
+                                <span class="material-symbols-outlined text-lg notranslate" translate="no">
+                                    {% if 'Road' in service.name %}construction
+                                    {% elif 'Bio' in service.name %}eco
+                                    {% elif 'Skill' in service.name %}engineering
+                                    {% else %}assignment{% endif %}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="font-mono text-[10px] text-stone uppercase block font-bold">SCHEME #{{ service.id|stringformat:"03d" }}</span>
+                                <h3 class="font-serif text-base font-bold text-ink dark:text-paper group-hover:text-rust transition-colors">
+                                    {{ service.name }}
+                                </h3>
+                            </div>
+                        </div>
+
+                        <span class="inline-block px-2 py-0.5 text-[10px] font-mono uppercase font-bold tracking-wider border border-civic-green/40 text-civic-green bg-green-50/50 dark:bg-green-950/20 flex-shrink-0">
+                            {{ service.max_applications }} Slots Open
+                        </span>
+                    </div>
+
+                    <!-- Description -->
+                    <p class="text-xs text-charcoal dark:text-stone leading-relaxed mb-4">
+                        {{ service.description }}
+                    </p>
+                </div>
+
+                <!-- Footer & Action -->
+                <div class="pt-3 border-t border-[#D8CDBB]/70 dark:border-[#3E3E34] flex items-center justify-between text-[11px] font-mono text-stone">
+                    <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs text-rust notranslate" translate="no">schedule</span>
+                        <span>Added {{ service.created_at|timesince }} ago</span>
+                    </span>
+
+                    <a href="{% url 'apply_service' service.id %}"
+                        class="px-3 py-1.5 bg-rust hover:bg-rust-dark text-paper text-xs font-semibold uppercase tracking-wider border border-rust transition-colors shadow-sm inline-flex items-center gap-1">
+                        <span>Apply</span>
+                        <span class="material-symbols-outlined text-xs notranslate" translate="no">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-2 bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-12 text-center shadow-card">
+                <span class="material-symbols-outlined text-4xl text-stone notranslate mb-2" translate="no">category</span>
+                <p class="text-xs font-mono uppercase tracking-wider text-stone">No public schemes registered yet</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

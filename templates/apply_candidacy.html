@@ -1,44 +1,87 @@
 {% extends 'base.html' %}
-{% load static %}
+{% block title %}Apply for Candidacy · Digital Gram Panchayat{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Apply for Candidacy - {{ voting_session.title }}</h2>
+<div class="max-w-2xl mx-auto px-4 py-8 sm:py-14">
     
-    <div class="card mb-4">
-        <div class="card-body">
-            <h3>Position: {{ voting_session.position.name }}</h3>
-            <p>{{ voting_session.description }}</p>
-            <p><strong>Application Deadline:</strong> {{ voting_session.start_date|date:"F j, Y, g:i a" }}</p>
+    <!-- Top Administrative Metadata Header -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-stone border-b border-[#D8CDBB] dark:border-[#37372F] pb-2">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 bg-rust"></span>
+            <span class="uppercase tracking-widest text-ink dark:text-paper font-semibold">CANDIDACY NOMINATION FORM</span>
+            <span class="text-stone">/</span>
+            <span class="uppercase">SEC-CANDIDATE-{{ voting_session.id }}</span>
         </div>
+        <a href="{% url 'voting_sessions' %}" class="text-stone hover:text-rust flex items-center gap-1 uppercase tracking-wider text-[11px]">
+            <span class="material-symbols-outlined text-xs notranslate" translate="no">arrow_back</span>
+            <span>Back to Sessions</span>
+        </a>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <h3 class="h5 mb-0">Candidate Application Form</h3>
+    <!-- Nomination Container -->
+    <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-6 sm:p-10 shadow-card relative">
+        <div class="mb-6 pb-4 border-b border-[#D8CDBB] dark:border-[#3E3E34]">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-khadi dark:bg-[#1E1E19] border border-[#D8CDBB] dark:border-[#3E3E34] p-1 flex items-center justify-center text-rust">
+                    <span class="material-symbols-outlined text-xl notranslate" translate="no">person_add</span>
+                </div>
+                <div>
+                    <h1 class="font-serif text-2xl font-bold text-ink dark:text-paper leading-tight">
+                        Candidacy Nomination
+                    </h1>
+                    <span class="text-xs text-stone uppercase tracking-wider block">
+                        Position: {{ voting_session.position.name }} ({{ voting_session.title }})
+                    </span>
+                </div>
+            </div>
+            <p class="text-xs text-charcoal dark:text-stone mt-2 leading-relaxed">
+                {{ voting_session.description }}
+            </p>
         </div>
-        <div class="card-body">
-            <form method="post">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="candidate_name" class="form-label">Candidate Name <span class="text-muted">(Optional)</span></label>
-                    <input type="text" class="form-control" id="candidate_name" name="candidate_name" placeholder="Enter your display name (leave blank to use your profile name)">
-                    <div class="form-text">If different from your profile name, enter your preferred display name for the ballot.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="bio" class="form-label">Bio</label>
-                    <textarea class="form-control" id="bio" name="bio" rows="3" required></textarea>
-                    <div class="form-text">Tell us about yourself and why you're running for this position.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="experience" class="form-label">Relevant Experience</label>
-                    <textarea class="form-control" id="experience" name="experience" rows="3" required></textarea>
-                    <div class="form-text">Describe your experience and qualifications for this position.</div>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit Application</button>
-                <a href="{% url 'voting_sessions' %}" class="btn btn-secondary">Cancel</a>
-            </form>
-        </div>
+
+        <form method="post" class="space-y-4" autocomplete="off">
+            {% csrf_token %}
+
+            <div>
+                <label for="candidate_name" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Ballot Display Name (Optional)
+                </label>
+                <input type="text" id="candidate_name" name="candidate_name"
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust"
+                    placeholder="Leave blank to use profile name">
+                <span class="text-[11px] text-stone mt-1 block">Preferred display name printed on voter ballot.</span>
+            </div>
+
+            <div>
+                <label for="bio" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Candidate Biography & Vision <span class="text-rust">*</span>
+                </label>
+                <textarea id="bio" name="bio" rows="3" required
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust"
+                    placeholder="Tell ward voters about yourself and village priorities..."></textarea>
+            </div>
+
+            <div>
+                <label for="experience" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Civic Experience & Qualifications <span class="text-rust">*</span>
+                </label>
+                <textarea id="experience" name="experience" rows="3" required
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust"
+                    placeholder="Prior public works, Gram Sabha attendance, community work..."></textarea>
+            </div>
+
+            <div class="pt-4 border-t border-[#D8CDBB] dark:border-[#3E3E34] flex justify-end gap-3">
+                <a href="{% url 'voting_sessions' %}"
+                    class="px-4 py-2.5 border border-[#D8CDBB] dark:border-[#3E3E34] text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone hover:text-ink">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-5 py-2.5 bg-rust hover:bg-rust-dark text-paper text-xs font-semibold uppercase tracking-wider border border-rust transition-colors shadow-sm inline-flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm notranslate" translate="no">how_to_reg</span>
+                    <span>Submit Candidacy Application</span>
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

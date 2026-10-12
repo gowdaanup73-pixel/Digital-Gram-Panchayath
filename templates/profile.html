@@ -1,157 +1,282 @@
 {% extends 'base.html' %}
 {% load form_tags %}
+{% load validators_tags %}
+
+{% block title %}{% if is_own_profile %}Citizen Profile & Identity{% else %}{{ view_user.username }} · Profile Ledger{% endif %} · Digital Gram Panchayath{% endblock %}
+
 {% block content %}
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <header class="sticky top-16 z-10 bg-white dark:bg-gray-800 shadow-sm">
-        <div class="flex items-center justify-between p-4">
-            <div class="flex items-center gap-4">
-                <h1 class="text-xl font-bold text-gray-900 dark:text-white">
-                    {% if is_own_profile %}Your Profile{% else %}{{ view_user.username }}'s Profile{% endif %}</h1>
-                {% if messages %}
-                {% for message in messages %}
-                <div class="bg-green-50 dark:bg-green-900/50 text-green-600 dark:text-green-400 px-4 py-2 rounded-lg flex items-center">
-                    <span class="material-symbols-outlined mr-2">check_circle</span>
-                    {{ message }}
+<div class="min-h-screen bg-khadi-texture py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto space-y-6">
+
+        <!-- Architectural Header / Breadcrumb -->
+        <div class="border-b border-fine pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <div class="flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-stone-dark mb-1">
+                    <a href="{% url 'user_dashboard' %}" class="hover:text-rust transition flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm notranslate">arrow_back</span>
+                        <span>Citizen Desk</span>
+                    </a>
+                    <span>/</span>
+                    <span class="text-rust font-semibold">Civic Registry</span>
                 </div>
-                {% endfor %}
-                {% endif %}
+                <h1 class="font-serif text-2xl sm:text-3xl font-bold text-ink tracking-tight">
+                    {% if is_own_profile %}Citizen Identity & Profile{% else %}{{ view_user.username }} · Resident Record{% endif %}
+                </h1>
+                <p class="text-xs sm:text-sm text-stone-dark mt-1">
+                    Official Gram Panchayath resident credentials, demographic record, and service contact data.
+                </p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 px-3 py-1 bg-surface border border-fine text-ink font-mono text-xs rounded">
+                    <span class="material-symbols-outlined text-sm text-rust notranslate">badge</span>
+                    <span>UID: #{{ view_user.id|stringformat:"05d" }}</span>
+                </span>
             </div>
         </div>
-    </header>
 
-    <main class="p-4">
-        <div class="max-w-2xl mx-auto">
-            <form method="POST" enctype="multipart/form-data" class="space-y-6">
-                {% csrf_token %}
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-                    <div class="space-y-4">
-                        <!-- User Information -->
-                        <div>
-                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Personal Information</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
-                                    {% if can_edit %}
-                                        <div class="mt-1">
-                                            {{ u_form.first_name|addclass:"block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" }}
-                                        </div>
-                                    {% else %}
-                                        <p class="mt-1 text-gray-900 dark:text-gray-100">{{ view_user.first_name|default:"Not provided" }}</p>
-                                    {% endif %}
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
-                                    {% if can_edit %}
-                                        <div class="mt-1">
-                                            {{ u_form.last_name|addclass:"block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" }}
-                                        </div>
-                                    {% else %}
-                                        <p class="mt-1 text-gray-900 dark:text-gray-100">{{ view_user.last_name|default:"Not provided" }}</p>
-                                    {% endif %}
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                                    {% if can_edit %}
-                                        <div class="mt-1">
-                                            {{ u_form.email|addclass:"block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" }}
-                                        </div>
-                                    {% else %}
-                                        <p class="mt-1 text-gray-900 dark:text-gray-100">{{ view_user.email|default:"Not provided" }}</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Profile Information -->
-                        <div class="pt-4">
-                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Contact Details</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {% if can_edit %}
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
-                                        {{ p_form.phone_number|addclass:"mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" }}
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Aadhar Number</label>
-                                        {{ p_form.aadhar_number|addclass:"mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" }}
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date of Birth</label>
-                                        {{ p_form.date_of_birth|addclass:"mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" }}
-                                    </div>
-                                    <div class="col-span-full">
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
-                                        {{ p_form.address|addclass:"mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" }}
-                                    </div>
-                                {% else %}
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
-                                        <p class="mt-1 text-gray-900 dark:text-gray-100">{{ profile.phone_number|default:"Not provided" }}</p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Aadhar Number</label>
-                                        <p class="mt-1 text-gray-900 dark:text-gray-100">{{ profile.aadhar_number|default:"Not provided" }}</p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date of Birth</label>
-                                        <p class="mt-1 text-gray-900 dark:text-gray-100">{{ profile.date_of_birth|default:"Not provided" }}</p>
-                                    </div>
-                                    <div class="col-span-full">
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
-                                        <p class="mt-1 text-gray-900 dark:text-gray-100">{{ profile.address|default:"Not provided" }}</p>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Profile Picture (not editable - upload not supported) -->
-                        <div class="pt-4">
-                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Profile Picture</h2>
-                            <div class="flex items-center space-x-4">
-                                {% if profile.profile_picture %}
-                                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="h-20 w-20 rounded-full object-cover">
-                                {% else %}
-                                <div class="h-20 w-20 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-4xl text-gray-400">person</span>
-                                </div>
-                                {% endif %}
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Profile photo is set automatically.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {% if can_edit %}
-                    <div class="mt-6 flex justify-end space-x-3">
-                        <a href="{% url 'user_dashboard' %}" 
-                            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600">
-                            Cancel
-                        </a>
-                        <button type="submit"
-                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                            Save Changes
-                        </button>
-                    </div>
-                    {% endif %}
-                </div>
-            </form>
+        {% if messages %}
+        <div class="space-y-2">
+            {% for message in messages %}
+            <div class="p-4 bg-paper border-l-4 {% if message.tags == 'error' %}border-red-700 text-red-900{% else %}border-rust text-ink{% endif %} border-y border-r border-fine shadow-sm text-sm flex items-start gap-3">
+                <span class="material-symbols-outlined text-rust shrink-0 notranslate">info</span>
+                <div>{{ message }}</div>
+            </div>
+            {% endfor %}
         </div>
-    </main>
+        {% endif %}
 
-    <footer class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-        <nav class="flex justify-around py-3">
-            <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="{% url 'user_dashboard' %}">
-                <span class="material-symbols-outlined">dashboard</span>
-                <span class="text-xs">Dashboard</span>
-            </a>
-            <a class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400" href="{% url 'services' %}">
-                <span class="material-symbols-outlined">list_alt</span>
-                <span class="text-xs">Services</span>
-            </a>
-            <a class="flex flex-col items-center gap-1 text-primary" href="#">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">person</span>
-                <span class="text-xs">Profile</span>
-            </a>
-        </nav>
-    </footer>
+        {% if is_own_profile and can_edit %}
+        {% with missing='' %}
+        {% if not view_user.first_name or not view_user.last_name or not view_user.email or not profile.phone_number or not profile.address %}
+        <div class="p-4 bg-amber-50 dark:bg-[#2A2500] border border-amber-300 dark:border-[#5C5000] text-amber-900 dark:text-amber-200 text-xs flex items-start gap-3 rounded shadow-sm">
+            <span class="material-symbols-outlined text-amber-600 shrink-0 notranslate text-base mt-0.5">edit_note</span>
+            <div>
+                <p class="font-semibold uppercase tracking-wider text-[11px] mb-1">Profile Incomplete — Action Required</p>
+                <p class="mb-1">
+                    Complete your civic registration to apply for services and cast votes.
+                    ನಿಮ್ಮ ನಾಗರಿಕ ನೋಂದಣಿಯನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ. / अपना नागरिक पंजीकरण पूरा करें।
+                </p>
+                <ul class="list-disc pl-4 space-y-0.5">
+                    {% if not view_user.first_name %}<li>First name is missing</li>{% endif %}
+                    {% if not view_user.last_name %}<li>Last name is missing</li>{% endif %}
+                    {% if not view_user.email %}<li>Email address is missing</li>{% endif %}
+                    {% if not profile.phone_number %}<li>Mobile number is missing</li>{% endif %}
+                    {% if not profile.address %}<li>Residential address is missing</li>{% endif %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% endif %}
+
+        <!-- Main Form Card -->
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Section 1: Institutional Identity Overview -->
+            <div class="bg-paper border border-fine shadow-sm p-6 sm:p-8 relative">
+                <div class="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-fine pointer-events-none"></div>
+
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-6 border-b border-fine">
+                    <div class="relative shrink-0">
+                        {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="Profile Photo" class="w-24 h-24 rounded border-2 border-fine object-cover bg-surface">
+                        {% else %}
+                        <div class="w-24 h-24 rounded border-2 border-fine bg-surface flex flex-col items-center justify-center text-stone-dark">
+                            <span class="material-symbols-outlined text-4xl notranslate">account_circle</span>
+                            <span class="text-[10px] font-mono uppercase tracking-wider mt-1">Resident</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="text-center sm:text-left flex-1">
+                        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
+                            <h2 class="font-serif text-xl font-bold text-ink">
+                                {{ view_user.get_full_name|default:view_user.username }}
+                            </h2>
+                            {% if view_user.is_staff %}
+                            <span class="px-2 py-0.5 bg-rust/10 text-rust border border-rust/30 text-xs font-mono uppercase tracking-wider rounded">Panchayat Officer</span>
+                            {% else %}
+                            <span class="px-2 py-0.5 bg-surface text-charcoal border border-fine text-xs font-mono uppercase tracking-wider rounded">Registered Citizen</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-xs font-mono text-stone-dark mb-3">Username: @{{ view_user.username }} · Joined: {{ view_user.date_joined|date:"M d, Y" }}</p>
+                        
+                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface border border-fine rounded text-xs text-charcoal">
+                            <span class="material-symbols-outlined text-sm text-stone-dark notranslate">lock</span>
+                            <span>Resident profile photo is synchronized with electoral identity system.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="pt-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-xs font-mono uppercase tracking-wider text-rust font-bold">Section I</span>
+                        <h3 class="font-serif text-base font-bold text-ink">Personal Information</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">First Name</label>
+                            {% if can_edit %}
+                                {{ u_form.first_name|addclass:"w-full px-3 py-2 bg-paper border border-fine text-ink text-sm rounded focus:outline-none focus:border-rust focus:ring-1 focus:ring-rust transition" }}
+                            {% else %}
+                                <div class="px-3 py-2 bg-surface border border-fine text-ink text-sm rounded">
+                                    {{ view_user.first_name|default:"—" }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">Last Name</label>
+                            {% if can_edit %}
+                                {{ u_form.last_name|addclass:"w-full px-3 py-2 bg-paper border border-fine text-ink text-sm rounded focus:outline-none focus:border-rust focus:ring-1 focus:ring-rust transition" }}
+                            {% else %}
+                                <div class="px-3 py-2 bg-surface border border-fine text-ink text-sm rounded">
+                                    {{ view_user.last_name|default:"—" }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">Official Contact Email</label>
+                            {% if can_edit %}
+                                {{ u_form.email|addclass:"w-full px-3 py-2 bg-paper border border-fine text-ink text-sm rounded focus:outline-none focus:border-rust focus:ring-1 focus:ring-rust transition" }}
+                                <p class="text-[11px] text-stone-dark mt-1 font-mono">Used for statutory notifications, scheme status alerts, and password recovery.</p>
+                            {% else %}
+                                <div class="px-3 py-2 bg-surface border border-fine text-ink text-sm rounded">
+                                    {{ view_user.email|default:"Not recorded" }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Details -->
+                <div class="pt-6 border-t border-fine mt-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-xs font-mono uppercase tracking-wider text-rust font-bold">Section II</span>
+                        <h3 class="font-serif text-base font-bold text-ink">Demographic & Ward Registry</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">Primary Mobile Number</label>
+                            {% if can_edit %}
+                                {{ p_form.phone_number|addclass:"w-full px-3 py-2 bg-paper border border-fine text-ink text-sm rounded focus:outline-none focus:border-rust focus:ring-1 focus:ring-rust transition" }}
+                            {% else %}
+                                <div class="px-3 py-2 bg-surface border border-fine text-ink text-sm rounded font-mono">
+                                    {{ profile.phone_number|default:"Not recorded" }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">Aadhaar Reference Number
+                                <span class="ml-1 text-stone font-normal normal-case">(optional)</span>
+                            </label>
+                            {% if can_edit %}
+                                {{ p_form.aadhar_number|addclass:"w-full px-3 py-2 bg-paper border border-fine text-ink text-sm rounded focus:outline-none focus:border-rust focus:ring-1 focus:ring-rust transition font-mono" }}
+                                <p class="text-[11px] text-stone-dark mt-1 font-mono">
+                                    Enter 12 digits (spaces/hyphens allowed). Stored masked for privacy.
+                                    ಆಧಾರ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ. / आधार संख्या दर्ज करें।
+                                </p>
+                            {% else %}
+                                <div class="px-3 py-2 bg-surface border border-fine text-ink text-sm rounded font-mono flex items-center gap-2">
+                                    {% if profile.aadhar_number %}
+                                        <span class="tracking-widest">{{ profile.aadhar_number|mask_aadhar_display }}</span>
+                                        <span class="text-[10px] text-stone ml-1">(masked for privacy)</span>
+                                    {% else %}
+                                        <span class="text-stone">Not recorded</span>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+
+                        <div>
+                            <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">Date of Birth</label>
+                            {% if can_edit %}
+                                {{ p_form.date_of_birth|addclass:"w-full px-3 py-2 bg-paper border border-fine text-ink text-sm rounded focus:outline-none focus:border-rust focus:ring-1 focus:ring-rust transition" }}
+                            {% else %}
+                                <div class="px-3 py-2 bg-surface border border-fine text-ink text-sm rounded">
+                                    {{ profile.date_of_birth|default:"Not recorded" }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-mono tracking-wider uppercase text-charcoal mb-1">Residential Village Address</label>
+                            {% if can_edit %}
+                                {{ p_form.address|addclass:"w-full px-3 py-2 bg-paper border border-fine text-ink text-sm rounded focus:outline-none focus:border-rust focus:ring-1 focus:ring-rust transition" }}
+                            {% else %}
+                                <div class="px-3 py-2 bg-surface border border-fine text-ink text-sm rounded">
+                                    {{ profile.address|default:"Not recorded" }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Controls -->
+                {% if can_edit %}
+                <div class="mt-8 pt-6 border-t border-fine flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <a href="{% url 'user_dashboard' %}" 
+                       class="w-full sm:w-auto px-5 py-2.5 bg-surface hover:bg-khadi-dark border border-fine text-ink font-medium text-xs uppercase tracking-wider rounded transition text-center">
+                        Return to Desk
+                    </a>
+                    <button type="submit"
+                            class="w-full sm:w-auto px-6 py-2.5 bg-rust hover:bg-rust-dark text-paper font-semibold text-xs uppercase tracking-wider rounded shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm notranslate">save</span>
+                        <span>Save Profile Record</span>
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </form>
+
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function () {
+    "use strict";
+    const aadhaarInput = document.getElementById('id_aadhar_number');
+    if (!aadhaarInput) return;
+
+    const hint = document.createElement('p');
+    hint.className = 'text-[11px] mt-1 font-mono transition-colors';
+    aadhaarInput.parentNode.insertBefore(hint, aadhaarInput.nextSibling);
+
+    function countDigits(val) {
+        return (val.replace(/[\s\-X]/gi, '')).replace(/\D/g, '').length;
+    }
+
+    function updateHint() {
+        const val = aadhaarInput.value.trim();
+        if (!val || val.startsWith('XXXX')) {
+            hint.textContent = '';
+            return;
+        }
+        const digits = countDigits(val);
+        if (digits < 12) {
+            hint.textContent = `${digits}/12 digits entered. `;
+            hint.className = 'text-[11px] mt-1 font-mono text-amber-700 dark:text-amber-400';
+        } else if (digits === 12) {
+            hint.textContent = '✓ 12 digits — submit to verify checksum.';
+            hint.className = 'text-[11px] mt-1 font-mono text-green-700 dark:text-green-400';
+        } else {
+            hint.textContent = `${digits} digits — Aadhaar must be exactly 12.`;
+            hint.className = 'text-[11px] mt-1 font-mono text-red-700 dark:text-red-400';
+        }
+    }
+
+    aadhaarInput.addEventListener('input', updateHint);
+    updateHint();
+})();
+</script>
 {% endblock %}

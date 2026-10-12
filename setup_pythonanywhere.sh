@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 # Digital Gram Panchayat - PythonAnywhere Auto Setup Script
 # Run this in your PythonAnywhere Bash console
 
@@ -35,9 +35,8 @@ pip install -r requirements.txt -q
 
 # Step 4: Collect static files
 echo "[4/7] Collecting static files..."
-export SECRET_KEY="a4859a60a83a861a343544af3ebb4d28"
-export DEBUG="False"
-export DATABASE_URL="postgresql://neondb_owner:npg_YDs0WMEtfBo9@ep-dawn-grass-aydi57us.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require"
+export SECRET_KEY="${SECRET_KEY:-insecure-setup-key-for-collectstatic-only}"
+export DEBUG="${DEBUG:-False}"
 python manage.py collectstatic --no-input -v 0
 
 # Step 5: Run migrations
@@ -47,22 +46,22 @@ python manage.py migrate --run-syncdb
 # Step 6: Write WSGI file
 echo "[6/7] Writing WSGI configuration..."
 WSGI_FILE="/var/www/${USERNAME}_pythonanywhere_com_wsgi.py"
-cat > "$WSGI_FILE" << WSGI
+cat > "$WSGI_FILE" << 'WSGI'
 import os
 import sys
+from dotenv import load_dotenv
 
-path = '/home/$USERNAME/Digital-Gram-Panchayath'
-if path not in sys.path:
-    sys.path.insert(0, path)
+project_home = os.path.expanduser('~/Digital-Gram-Panchayath')
+if project_home not in sys.path:
+    sys.path.insert(0, project_home)
 
-os.environ['SECRET_KEY'] = 'a4859a60a83a861a343544af3ebb4d28'
-os.environ['DEBUG'] = 'False'
-os.environ['DATABASE_URL'] = 'postgresql://neondb_owner:npg_YDs0WMEtfBo9@ep-dawn-grass-aydi57us.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require'
-os.environ['DJANGO_SETTINGS_MODULE'] = 'digital_gram_panchayat.settings'
+load_dotenv(os.path.join(project_home, '.env'))
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'digital_gram_panchayat.settings')
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 WSGI
+
 
 echo "  WSGI file written to: $WSGI_FILE"
 

@@ -1,136 +1,111 @@
 {% extends 'base.html' %}
+{% block title %}Create Election Session · Digital Gram Panchayat{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-                <span class="material-symbols-outlined mr-3 text-primary">add_circle</span>
-                Create New Voting Session
-            </h1>
-            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Set up a new voting session for an elected position
+<div class="max-w-3xl mx-auto px-4 py-8 sm:py-14">
+    
+    <!-- Top Administrative Metadata Header -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-stone border-b border-[#D8CDBB] dark:border-[#37372F] pb-2">
+        <div class="flex items-center gap-2">
+            <span class="inline-block w-1.5 h-1.5 bg-rust"></span>
+            <span class="uppercase tracking-widest text-ink dark:text-paper font-semibold">ELECTION COMMISSION DESK</span>
+            <span class="text-stone">/</span>
+            <span class="uppercase">SEC-SESSION-NEW</span>
+        </div>
+        <a href="{% url 'manage_voting_sessions' %}" class="text-stone hover:text-rust flex items-center gap-1 uppercase tracking-wider text-[11px]">
+            <span class="material-symbols-outlined text-xs notranslate" translate="no">arrow_back</span>
+            <span>Return to Election Admin</span>
+        </a>
+    </div>
+
+    <!-- Container -->
+    <div class="bg-paper dark:bg-[#25251F] border border-[#D8CDBB] dark:border-[#3E3E34] p-6 sm:p-10 shadow-card relative">
+        <div class="mb-6 pb-4 border-b border-[#D8CDBB] dark:border-[#3E3E34]">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-khadi dark:bg-[#1E1E19] border border-[#D8CDBB] dark:border-[#3E3E34] p-1 flex items-center justify-center text-rust">
+                    <span class="material-symbols-outlined text-xl notranslate" translate="no">how_to_vote</span>
+                </div>
+                <div>
+                    <h1 class="font-serif text-2xl font-bold text-ink dark:text-paper leading-tight">
+                        Schedule Ward Election Ballot
+                    </h1>
+                    <span class="text-xs text-stone uppercase tracking-wider block">
+                        ಹೊಸ ಗ್ರಾಮ ಪಂಚಾಯತಿ ಚುನಾವಣೆ ನಿಗದಿ
+                    </span>
+                </div>
+            </div>
+            <p class="text-xs text-charcoal dark:text-stone mt-2">
+                Schedule polling start and conclusion timestamps, specify elected civic offices, and publish candidacy rules.
             </p>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
-            <form method="post" class="p-6 space-y-6">
-                {% csrf_token %}
-                
-                <!-- Title -->
+        <form method="post" class="space-y-4" autocomplete="off">
+            {% csrf_token %}
+
+            <div>
+                <label for="title" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Election Session Title <span class="text-rust">*</span>
+                </label>
+                <input type="text" name="title" id="title" required
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust"
+                    placeholder="e.g. Ward 4 Panchayat Representative Election 2026">
+            </div>
+
+            <div>
+                <label for="description" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Constitutional Description & Rules <span class="text-rust">*</span>
+                </label>
+                <textarea name="description" id="description" rows="3" required
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust"
+                    placeholder="Voting guidelines, eligibility of ward voters, and ballot rules..."></textarea>
+            </div>
+
+            <div>
+                <label for="position" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                    Elected Civic Position <span class="text-rust">*</span>
+                </label>
+                <select name="position" id="position" required
+                    class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust">
+                    {% if positions %}
+                    <option value="">Select an elected seat</option>
+                    {% for position in positions %}
+                    <option value="{{ position.id }}">{{ position.name }} ({{ position.term_length }} year term)</option>
+                    {% endfor %}
+                    {% else %}
+                    <option value="" disabled>No registered positions available</option>
+                    {% endif %}
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Title
+                    <label for="start_date" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                        Polling Window Open <span class="text-rust">*</span>
                     </label>
-                    <input type="text" name="title" id="title" required
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                        focus:border-primary focus:ring-primary sm:text-sm
-                        dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        placeholder="Enter voting session title">
+                    <input type="datetime-local" name="start_date" id="start_date" required
+                        class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust">
                 </div>
-
-                <!-- Description -->
                 <div>
-                    <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Description
+                    <label for="end_date" class="block text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone mb-1.5">
+                        Polling Window Close <span class="text-rust">*</span>
                     </label>
-                    <textarea name="description" id="description" rows="4" required
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                        focus:border-primary focus:ring-primary sm:text-sm
-                        dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        placeholder="Provide details about this voting session"></textarea>
+                    <input type="datetime-local" name="end_date" id="end_date" required
+                        class="bg-[#FAF6EE] dark:bg-[#1E1E19] text-ink dark:text-paper block w-full px-3 py-2.5 text-xs sm:text-sm border border-[#D8CDBB] dark:border-[#3E3E34] rounded-none focus:border-rust">
                 </div>
+            </div>
 
-                <!-- Position -->
-                <div>
-                    <label for="position" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Position
-                    </label>
-                    <select name="position" id="position" required
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                        focus:border-primary focus:ring-primary sm:text-sm
-                        dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        {% if positions %}
-                        <option value="">Select a position</option>
-                        {% for position in positions %}
-                        <option value="{{ position.id }}">{{ position.name }} ({{ position.term_length }} year term)</option>
-                        {% endfor %}
-                        {% else %}
-                        <option value="" disabled>No positions available. Create one first.</option>
-                        {% endif %}
-                    </select>
-                </div>
-
-                <!-- Dates -->
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                    <div>
-                        <label for="start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Start Date & Time
-                        </label>
-                        <input type="datetime-local" name="start_date" id="start_date" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                            focus:border-primary focus:ring-primary sm:text-sm
-                            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    </div>
-
-                    <div>
-                        <label for="end_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            End Date & Time
-                        </label>
-                        <input type="datetime-local" name="end_date" id="end_date" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                            focus:border-primary focus:ring-primary sm:text-sm
-                            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    </div>
-                </div>
-
-                <!-- Buttons -->
-                <div class="flex justify-end space-x-3 pt-6">
-                    <a href="{% url 'manage_voting_sessions' %}"
-                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm
-                        font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2
-                        focus:ring-offset-2 focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300
-                        dark:hover:bg-gray-600">
-                        <span class="material-symbols-outlined mr-2">arrow_back</span>
-                        Cancel
-                    </a>
-                    <button type="submit"
-                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm
-                        font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2
-                        focus:ring-offset-2 focus:ring-primary">
-                        <span class="material-symbols-outlined mr-2">save</span>
-                        Create Session
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="pt-4 border-t border-[#D8CDBB] dark:border-[#3E3E34] flex justify-end gap-3">
+                <a href="{% url 'manage_voting_sessions' %}"
+                    class="px-4 py-2.5 border border-[#D8CDBB] dark:border-[#3E3E34] text-xs font-semibold uppercase tracking-wider text-charcoal dark:text-stone hover:text-ink">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-5 py-2.5 bg-rust hover:bg-rust-dark text-paper text-xs font-semibold uppercase tracking-wider border border-rust transition-colors shadow-sm inline-flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm notranslate" translate="no">add_circle</span>
+                    <span>Schedule Election</span>
+                </button>
+            </div>
+        </form>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Set minimum date for start_date to today
-    const today = new Date();
-    const startDateInput = document.getElementById('start_date');
-    const endDateInput = document.getElementById('end_date');
-    
-    // Format date to YYYY-MM-DDThh:mm
-    const formatDate = (date) => {
-        return date.toISOString().slice(0, 16);
-    };
-    
-    startDateInput.min = formatDate(today);
-    
-    // Update end_date min when start_date changes
-    startDateInput.addEventListener('change', function() {
-        const startDate = new Date(this.value);
-        endDateInput.min = formatDate(startDate);
-        
-        // If end_date is before new start_date, update it
-        if (endDateInput.value && new Date(endDateInput.value) < startDate) {
-            endDateInput.value = formatDate(startDate);
-        }
-    });
-});
-</script>
 {% endblock %}
