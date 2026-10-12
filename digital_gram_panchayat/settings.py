@@ -38,8 +38,9 @@ DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
     if DEBUG or 'test' in sys.argv:
-        # Development / test fallback key
-        SECRET_KEY = 'django-insecure-dev-only-change-this-for-production-key-dgp-portal'
+        # Development / test fallback key generated dynamically per process
+        import secrets
+        SECRET_KEY = os.environ.get('SECRET_KEY') or f"dev-env-key-{secrets.token_hex(24)}"
     else:
         raise ImproperlyConfigured(
             "SECRET_KEY environment variable is missing. Set SECRET_KEY in your production environment."

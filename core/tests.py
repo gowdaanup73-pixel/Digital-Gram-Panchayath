@@ -1,4 +1,6 @@
 import io
+import os
+import secrets
 from datetime import timedelta
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -17,6 +19,13 @@ from core.models import (
 )
 from core.throttling import is_rate_limited, record_failed_attempt, reset_attempts
 
+# Dynamic / environment-backed test credentials
+# Ensures zero hardcoded credentials and prevents secret scanner triggers
+_TEST_CITIZEN_PASSWORD = os.environ.get('TEST_CITIZEN_PASSWORD') or f"Citizen_{secrets.token_hex(8)}!Aa1"
+_TEST_OFFICER_PASSWORD = os.environ.get('TEST_OFFICER_PASSWORD') or f"Officer_{secrets.token_hex(8)}!Aa1"
+_TEST_STRONG_PASSWORD = os.environ.get('TEST_STRONG_PASSWORD') or f"Strong_{secrets.token_hex(8)}!Aa1"
+_TEST_ALT_PASSWORD = os.environ.get('TEST_ALT_PASSWORD') or f"Alt_{secrets.token_hex(8)}!Aa1"
+
 
 class SecurityAuthenticationTests(TestCase):
     """
@@ -27,12 +36,12 @@ class SecurityAuthenticationTests(TestCase):
         self.client = Client()
         self.citizen = User.objects.create_user(
             username='citizen_alice',
-            password='Password123!',
+            password=_TEST_CITIZEN_PASSWORD,
             email='alice@example.com'
         )
         self.officer = User.objects.create_superuser(
             username='officer_bob',
-            password='OfficerPassword123!',
+            password=_TEST_OFFICER_PASSWORD,
             email='bob@example.com'
         )
 
@@ -40,8 +49,8 @@ class SecurityAuthenticationTests(TestCase):
         response = self.client.post(reverse('register'), {
             'username': 'new_citizen',
             'email': 'new@example.com',
-            'password1': 'StrongP@ssw0rd2026',
-            'password2': 'StrongP@ssw0rd2026',
+            'password1': _TEST_STRONG_PASSWORD,
+            'password2': _TEST_STRONG_PASSWORD,
         })
         self.assertRedirects(response, reverse('login'))
         new_user = User.objects.get(username='new_citizen')
@@ -64,8 +73,8 @@ class SecurityAuthenticationTests(TestCase):
         response = self.client.post(reverse('register'), {
             'username': 'hacker_citizen',
             'email': 'hacker@example.com',
-            'password1': 'StrongP@ssw0rd2026',
-            'password2': 'StrongP@ssw0rd2026',
+            'password1': _TEST_STRONG_PASSWORD,
+            'password2': _TEST_STRONG_PASSWORD,
             'is_staff': True,
             'is_superuser': True,
         })
@@ -76,7 +85,7 @@ class SecurityAuthenticationTests(TestCase):
     def test_citizen_login_success(self):
         response = self.client.post(reverse('login'), {
             'username': 'citizen_alice',
-            'password': 'Password123!',
+            'password': _TEST_CITIZEN_PASSWORD,
         })
         self.assertRedirects(response, reverse('services'))
 
@@ -84,7 +93,7 @@ class SecurityAuthenticationTests(TestCase):
         # Citizen attempting to log in via officer_login must be rejected
         response = self.client.post(reverse('officer_login'), {
             'username': 'citizen_alice',
-            'password': 'Password123!',
+            'password': _TEST_CITIZEN_PASSWORD,
         })
         self.assertEqual(response.status_code, 200)
         self.assertFalse('_auth_user_id' in self.client.session)
@@ -92,7 +101,7 @@ class SecurityAuthenticationTests(TestCase):
     def test_officer_login_success(self):
         response = self.client.post(reverse('officer_login'), {
             'username': 'officer_bob',
-            'password': 'OfficerPassword123!',
+            'password': _TEST_OFFICER_PASSWORD,
         })
         self.assertRedirects(response, reverse('officer_dashboard'))
 
@@ -105,13 +114,13 @@ class SecurityAuthenticationTests(TestCase):
         # 6th attempt should trigger rate limiting lockout
         response = self.client.post(reverse('login'), {
             'username': 'citizen_alice',
-            'password': 'Password123!',
+            'password': _TEST_CITIZEN_PASSWORD,
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Too many failed login attempts')
 
     def test_logout_clears_session(self):
-        self.client.login(username='citizen_alice', password='Password123!')
+        self.client.login(username='citizen_alice', password=_TEST_CITIZEN_PASSWORD)
         response = self.client.get(reverse('logout'))
         self.assertRedirects(response, reverse('login'))
         self.assertNotIn('_auth_user_id', self.client.session)
@@ -123,9 +132,9 @@ class AuthorizationAndIDORTests(TestCase):
     """
     def setUp(self):
         cache.clear()
-        self.citizen_a = User.objects.create_user(username='citizen_a', password='Password123!')
-        self.citizen_b = User.objects.create_user(username='citizen_b', password='Password123!')
-        self.officer = User.objects.create_superuser(username='officer_charlie', password='OfficerPassword123!')
+        self.citizen_a = User.objects.create_user(username='citizen_a', password=_TEST_CITIZEN_PASSWORD)
+        self.citizen_b = User.objects.create_user(username='citizen_b', password=_TEST_CITIZEN_PASSWORD)
+        self.officer = User.objects.create_superuser(username='officer_charlie', password=_TEST_OFFICER_PASSWORD)
 
         self.service = Service.objects.create(name='Income Certificate', description='Official certificate', max_applications=5)
 
@@ -146,45 +155,45 @@ class AuthorizationAndIDORTests(TestCase):
         )
 
     def test_citizen_cannot_access_officer_dashboard(self):
-        self.client.login(username='citizen_a', password='Password123!')
+        self.client.login(username='citizen_a', password=_TEST_CITIZEN_PASSWORD)
         response = self.client.get(reverse('officer_dashboard'))
         self.assertEqual(response.status_code, 403)
 
     def test_citizen_cannot_manage_services(self):
-        self.client.login(username='citizen_a', password='Password123!')
+        self.client.login(username='citizen_a', password=_TEST_CITIZEN_PASSWORD)
         response = self.client.get(reverse('manage_services'))
         self.assertEqual(response.status_code, 403)
 
     def test_citizen_cannot_view_all_applications(self):
-        self.client.login(username='citizen_a', password='Password123!')
+        self.client.login(username='citizen_a', password=_TEST_CITIZEN_PASSWORD)
         response = self.client.get(reverse('view_applications'))
         self.assertEqual(response.status_code, 403)
 
     def test_citizen_cannot_view_another_citizens_profile(self):
-        self.client.login(username='citizen_a', password='Password123!')
+        self.client.login(username='citizen_a', password=_TEST_CITIZEN_PASSWORD)
         response = self.client.get(reverse('view_profile', kwargs={'username': 'citizen_b'}))
         self.assertEqual(response.status_code, 403)
 
     def test_officer_can_view_any_citizen_profile(self):
-        self.client.login(username='officer_charlie', password='OfficerPassword123!')
+        self.client.login(username='officer_charlie', password=_TEST_OFFICER_PASSWORD)
         response = self.client.get(reverse('view_profile', kwargs={'username': 'citizen_a'}))
         self.assertEqual(response.status_code, 200)
 
     def test_user_dashboard_displays_only_own_records(self):
-        self.client.login(username='citizen_b', password='Password123!')
+        self.client.login(username='citizen_b', password=_TEST_CITIZEN_PASSWORD)
         response = self.client.get(reverse('user_dashboard'))
         self.assertEqual(response.status_code, 200)
         # Citizen B should not see Citizen A's application
         self.assertNotContains(response, 'Citizen A')
 
     def test_citizen_cannot_delete_another_citizens_complaint(self):
-        self.client.login(username='citizen_b', password='Password123!')
+        self.client.login(username='citizen_b', password=_TEST_CITIZEN_PASSWORD)
         response = self.client.post(reverse('delete_complaint', kwargs={'complaint_id': self.complaint_a.id}))
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Complaint.objects.filter(id=self.complaint_a.id).exists())
 
     def test_officer_can_approve_application(self):
-        self.client.login(username='officer_charlie', password='OfficerPassword123!')
+        self.client.login(username='officer_charlie', password=_TEST_OFFICER_PASSWORD)
         response = self.client.post(reverse('view_applications'), {
             'app_id': self.app_a.id,
             'action': 'accept'
@@ -194,7 +203,7 @@ class AuthorizationAndIDORTests(TestCase):
         self.assertEqual(self.app_a.status, Application.STATUS_APPROVED)
 
     def test_officer_reject_requires_reason(self):
-        self.client.login(username='officer_charlie', password='OfficerPassword123!')
+        self.client.login(username='officer_charlie', password=_TEST_OFFICER_PASSWORD)
         response = self.client.post(reverse('view_applications'), {
             'app_id': self.app_a.id,
             'action': 'reject',
@@ -211,9 +220,9 @@ class FileUploadAndSecurityValidationTests(TestCase):
     """
     def setUp(self):
         cache.clear()
-        self.user = User.objects.create_user(username='voter1', password='Password123!')
+        self.user = User.objects.create_user(username='voter1', password=_TEST_CITIZEN_PASSWORD)
         self.client = Client()
-        self.client.login(username='voter1', password='Password123!')
+        self.client.login(username='voter1', password=_TEST_CITIZEN_PASSWORD)
 
     def test_malicious_file_extension_rejected(self):
         bad_file = SimpleUploadedFile("exploit.exe", b"binary executable content", content_type="application/octet-stream")
@@ -253,7 +262,7 @@ class FileUploadAndSecurityValidationTests(TestCase):
             status='active',
             created_by=self.user
         )
-        cand_user = User.objects.create_user(username='cand1', password='Password123!')
+        cand_user = User.objects.create_user(username='cand1', password=_TEST_CITIZEN_PASSWORD)
         cand = Candidate.objects.create(
             user=cand_user,
             voting_session=session,
@@ -281,8 +290,8 @@ class RestApiAndJwtTests(TestCase):
     def setUp(self):
         cache.clear()
         self.api_client = APIClient()
-        self.citizen = User.objects.create_user(username='api_citizen', password='Password123!', email='api@example.com')
-        self.officer = User.objects.create_superuser(username='api_officer', password='OfficerPassword123!')
+        self.citizen = User.objects.create_user(username='api_citizen', password=_TEST_CITIZEN_PASSWORD, email='api@example.com')
+        self.officer = User.objects.create_superuser(username='api_officer', password=_TEST_OFFICER_PASSWORD)
 
         self.service = Service.objects.create(name='Birth Certificate', description='Issuance of birth record', max_applications=10)
         self.app = Application.objects.create(
@@ -296,7 +305,7 @@ class RestApiAndJwtTests(TestCase):
     def test_jwt_obtain_pair_valid(self):
         response = self.api_client.post(reverse('token_obtain_pair'), {
             'username': 'api_citizen',
-            'password': 'Password123!'
+            'password': _TEST_CITIZEN_PASSWORD
         })
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access', response.data)
@@ -312,7 +321,7 @@ class RestApiAndJwtTests(TestCase):
     def test_jwt_access_protected_endpoint(self):
         token_resp = self.api_client.post(reverse('token_obtain_pair'), {
             'username': 'api_citizen',
-            'password': 'Password123!'
+            'password': _TEST_CITIZEN_PASSWORD
         })
         access_token = token_resp.data['access']
         self.api_client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
@@ -324,7 +333,7 @@ class RestApiAndJwtTests(TestCase):
     def test_jwt_token_rotation(self):
         token_resp = self.api_client.post(reverse('token_obtain_pair'), {
             'username': 'api_citizen',
-            'password': 'Password123!'
+            'password': _TEST_CITIZEN_PASSWORD
         })
         refresh_token = token_resp.data['refresh']
 
@@ -338,7 +347,7 @@ class RestApiAndJwtTests(TestCase):
     def test_jwt_logout_and_revocation(self):
         token_resp = self.api_client.post(reverse('token_obtain_pair'), {
             'username': 'api_citizen',
-            'password': 'Password123!'
+            'password': _TEST_CITIZEN_PASSWORD
         })
         access_token = token_resp.data['access']
         refresh_token = token_resp.data['refresh']
@@ -352,7 +361,7 @@ class RestApiAndJwtTests(TestCase):
         self.assertEqual(try_refresh.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_api_application_idor_protection(self):
-        other_user = User.objects.create_user(username='other_user', password='Password123!')
+        other_user = User.objects.create_user(username='other_user', password=_TEST_CITIZEN_PASSWORD)
         other_app = Application.objects.create(
             user=other_user,
             service=self.service,
@@ -363,7 +372,7 @@ class RestApiAndJwtTests(TestCase):
 
         token_resp = self.api_client.post(reverse('token_obtain_pair'), {
             'username': 'api_citizen',
-            'password': 'Password123!'
+            'password': _TEST_CITIZEN_PASSWORD
         })
         self.api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token_resp.data['access']}")
 
@@ -381,7 +390,7 @@ class RestApiAndJwtTests(TestCase):
     def test_api_citizen_cannot_review_application(self):
         token_resp = self.api_client.post(reverse('token_obtain_pair'), {
             'username': 'api_citizen',
-            'password': 'Password123!'
+            'password': _TEST_CITIZEN_PASSWORD
         })
         self.api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {token_resp.data['access']}")
 
@@ -403,7 +412,7 @@ class OAuthAndPasswordResetTests(TestCase):
         self.client = Client()
         self.user = User.objects.create_user(
             username='reset_user',
-            password='OldPassword123!',
+            password=_TEST_CITIZEN_PASSWORD,
             email='citizen.reset@grampanchayat.local'
         )
 
@@ -452,15 +461,15 @@ class OAuthAndPasswordResetTests(TestCase):
         # 3. Post new password to the confirmed session URL
         post_url = confirm_get.redirect_chain[0][0] if confirm_get.redirect_chain else confirm_url
         confirm_post = self.client.post(post_url, {
-            'new_password1': 'BrandNewPassword123!',
-            'new_password2': 'BrandNewPassword123!',
+            'new_password1': _TEST_ALT_PASSWORD,
+            'new_password2': _TEST_ALT_PASSWORD,
         }, follow=True)
         self.assertContains(confirm_post, 'Password Reset Complete')
 
         # 4. Verify user can log in with new password
         login_resp = self.client.post(reverse('login'), {
             'username': 'reset_user',
-            'password': 'BrandNewPassword123!',
+            'password': _TEST_ALT_PASSWORD,
         })
         self.assertRedirects(login_resp, reverse('services'))
 
@@ -603,7 +612,7 @@ class AadhaarPrivacyTests(TestCase):
         the form must preserve the original stored value, not clear or error.
         """
         from core.forms import ProfileUpdateForm
-        user = User.objects.create_user(username='privacy_test_user', password='Pass123!')
+        user = User.objects.create_user(username='privacy_test_user', password=_TEST_CITIZEN_PASSWORD)
         profile, _ = Profile.objects.get_or_create(user=user)
         profile.aadhar_number = '987654321012'
         profile.save()
@@ -624,7 +633,7 @@ class AadhaarPrivacyTests(TestCase):
     def test_profile_form_shows_masked_initial_value(self):
         """ProfileUpdateForm initial must show masked Aadhaar, not raw digits."""
         from core.forms import ProfileUpdateForm
-        user = User.objects.create_user(username='mask_initial_user', password='Pass123!')
+        user = User.objects.create_user(username='mask_initial_user', password=_TEST_CITIZEN_PASSWORD)
         profile, _ = Profile.objects.get_or_create(user=user)
         profile.aadhar_number = '987654321012'
         profile.save()
@@ -636,11 +645,11 @@ class AadhaarPrivacyTests(TestCase):
         Profile page HTML must NOT contain raw Aadhaar digits when displaying
         a stored number — it must only show the masked form.
         """
-        user = User.objects.create_user(username='mask_view_user', password='Pass123!')
+        user = User.objects.create_user(username='mask_view_user', password=_TEST_CITIZEN_PASSWORD)
         profile, _ = Profile.objects.get_or_create(user=user)
         profile.aadhar_number = '987654321012'
         profile.save()
-        self.client.login(username='mask_view_user', password='Pass123!')
+        self.client.login(username='mask_view_user', password=_TEST_CITIZEN_PASSWORD)
         response = self.client.get(reverse('profile'))
         self.assertEqual(response.status_code, 200)
         # Full raw number must not appear in the rendered HTML
@@ -682,8 +691,7 @@ class GoogleOAuthAdapterTests(TestCase):
         adapter = GramPanchayathSocialAccountAdapter()
         user = User.objects.create_user(
             username='google_new_user',
-            password='!unusable',
-            email='',
+                        email='',
             first_name='',
             last_name='',
         )
@@ -726,8 +734,7 @@ class GoogleOAuthAdapterTests(TestCase):
         """
         user = User.objects.create_user(
             username='google_returning',
-            password='!unusable',
-            first_name='Anup',
+                        first_name='Anup',
             last_name='Gowda',
             email='existing@example.com',
         )
@@ -761,8 +768,7 @@ class GoogleOAuthAdapterTests(TestCase):
         """Social signup must never set is_staff or is_superuser."""
         user = User.objects.create_user(
             username='google_no_priv',
-            password='!unusable',
-        )
+                    )
         # Even if someone injects these in extra_data, adapter enforces
         user.is_staff = False
         user.is_superuser = False
@@ -775,8 +781,7 @@ class GoogleOAuthAdapterTests(TestCase):
         """Profile must be created for a Google OAuth user without Aadhaar autofill."""
         user = User.objects.create_user(
             username='google_profile_user',
-            password='!unusable',
-        )
+                    )
         Profile.objects.get_or_create(user=user)
         profile = Profile.objects.get(user=user)
         # Aadhaar must be empty — Google does not provide it
