@@ -11,8 +11,5 @@ urlpatterns = [
     path('api/v1/', include('core.api.urls')),
     path('', include('core.urls')),
 ]
-
-
-# Serve media files safely in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
